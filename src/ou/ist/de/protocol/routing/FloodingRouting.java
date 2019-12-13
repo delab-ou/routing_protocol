@@ -20,29 +20,43 @@ public class FloodingRouting extends RoutingProtocol{
 	public void receivePacket(Packet p) {
 		// TODO Auto-generated method stub
 		if(p.getDest().equals(this.node.getAddress())) {
-			p.setHops(1);
-			p.setSndr(node.getAddress());
-			p.setDest(p.getSrc());
-			p.setSrc(node.getAddress());
-			p.setType((byte)1);
 			System.out.println("replying "+p.toString());
-			this.s.send(p);
+			Packet pkt=this.generateInitialReplyPacket(p);
+			this.s.send(pkt);
 		}
 		else {
-			if(p.getSndr().equals(this.node.getAddress())) {
-				System.out.println("receive a packet from itself");
-				return;
-			}
-			p.setHops(p.getHops()+1);
-			p.setSndr(node.getAddress());
+			Packet pkt=this.generateForwaringPacket(p);
 			System.out.println("forwarding "+p.toString());
-			this.s.send(p);
+			this.s.send(pkt);
 		}
 	}
 	@Override
-	public Packet generateInitialRequestPacket(InetAddress dest) {
+	protected Packet generateInitialRequestPacket(InetAddress dest) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	protected Packet generateInitialReplyPacket(Packet p) {
+		// TODO Auto-generated method stub
+		p.setHops(1);
+		p.setSndr(node.getAddress());
+		p.setDest(p.getSrc());
+		p.setSrc(node.getAddress());
+		p.setType((byte)1);
+		System.out.println("replying "+p.toString());
+		return p;
+	}
+	@Override
+	protected Packet generateForwaringPacket(Packet p) {
+		// TODO Auto-generated method stub
+		if(p.getSndr().equals(this.node.getAddress())) {
+			System.out.println("receive a packet from itself");
+			return null;
+		}
+		p.setHops(p.getHops()+1);
+		p.setSndr(node.getAddress());
+		System.out.println("forwarding "+p.toString());
+		return p;
 	}
 	
 

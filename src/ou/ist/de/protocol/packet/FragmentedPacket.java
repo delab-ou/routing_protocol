@@ -74,9 +74,10 @@ public class FragmentedPacket extends BasePacket{
 		return super.getSize()+Integer.BYTES*3+this.fragmented.length;
 	}
 	@Override
-	public byte[] getPacketAsByteArray() {
+	public byte[] toBytes() {
 		// TODO Auto-generated method stub
-		ByteBuffer bb = ByteBuffer.allocate(this.getSize());		this.put(bb);
+		ByteBuffer bb = ByteBuffer.allocate(this.getSize());
+		this.put(bb);
 		return bb.array();
 	}
 	

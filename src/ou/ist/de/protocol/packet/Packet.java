@@ -60,7 +60,7 @@ public class Packet extends BasePacket{
 		bb.put(option);
 	}
 	@Override
-	public byte[] getPacketAsByteArray() {
+	public byte[] toBytes() {
 		
 		ByteBuffer bb = ByteBuffer.allocate(this.getSize());
 		this.put(bb);

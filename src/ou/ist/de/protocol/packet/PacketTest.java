@@ -41,7 +41,7 @@ public class PacketTest {
 			for(int i=0;i<p1size;i++) {
 				p1.option[i]=(byte)(i/20);
 			}
-			byte[] b=p.getPacketAsByteArray();
+			byte[] b=p.toBytes();
 			System.out.println(p);
 			System.out.println("packet byte length is "+b.length);
 			Packet p2=new Packet(b);
@@ -52,7 +52,7 @@ public class PacketTest {
 			pf.packetFragmentation(alp, p2);
 			pf.packetFragmentation(alp1, p1);
 			for(FragmentedPacket fp:alp) {
-				byte[] tmp=fp.getPacketAsByteArray();
+				byte[] tmp=fp.toBytes();
 				System.out.println(fp);
 				System.out.println(new FragmentedPacket(tmp));
 			}

@@ -33,7 +33,7 @@ public class Sender {
 		pf.packetFragmentation(alfp, p);
 
 		for (FragmentedPacket fp : alfp) {
-			byte[] data = fp.getPacketAsByteArray();
+			byte[] data = fp.toBytes();
 			DatagramPacket dp = new DatagramPacket(data, data.length, fp.getNext(), Constants.PORT);
 			this.send(dp);
 		}

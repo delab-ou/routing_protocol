@@ -25,6 +25,8 @@ public abstract class RoutingProtocol {
 		this.s=s;
 	}
 	public abstract void receivePacket(Packet p);
-	public abstract Packet generateInitialRequestPacket(InetAddress dest);
+	protected abstract Packet generateInitialRequestPacket(InetAddress dest);
+	protected abstract Packet generateInitialReplyPacket(Packet p);
+	protected abstract Packet generateForwaringPacket(Packet p);
 	
 }

@@ -94,7 +94,7 @@ public class BasePacket {
 		bb.putInt(hops);
 	}
 
-	public byte[] getPacketAsByteArray() {
+	public byte[] toBytes() {
 
 		ByteBuffer bb = ByteBuffer.allocate(this.getSize());
 		this.put(bb);

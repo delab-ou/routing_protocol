@@ -2,6 +2,7 @@ package ou.ist.de.protocol.node;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
@@ -16,6 +17,7 @@ public class Node {
 	protected Receiver r;
 	protected Sender s;
 	protected InetAddress addr;
+	protected InetAddress baddr;
 	protected int port;
 	protected RoutingProtocol rp;
 
@@ -54,16 +56,21 @@ public class Node {
 	public InetAddress getAddress() {
 		return addr;
 	}
-
+	public InetAddress getBroadcastAddress() {
+		return baddr;
+	}
 	public void setRoutingProtocol(RoutingProtocol rp) {
 		this.rp = rp;
 		this.rp.setNode(this);
 		this.rp.setSender(s);
 		this.r.rp = this.rp;
-		System.out.println("ip address is " + addr);
+		System.out.println("ip address is " + addr+" brd is "+baddr);
 	}
 	public void setLocalAddress(InetAddress addr) {
 		this.addr=addr;
+	}
+	public void setBroadcastAddress(InetAddress baddr) {
+		this.baddr=baddr;
 	}
 	public void startRouteEstablishment(InetAddress dest) {
 		this.send(rp.generateInitialRequestPacket(dest));
@@ -89,9 +96,8 @@ public class Node {
 			else {
 				while(ifs.hasMoreElements()) {
 					NetworkInterface ni=ifs.nextElement();
-					Enumeration<InetAddress> addrs=ni.getInetAddresses();
-					while(addrs.hasMoreElements()) {
-						InetAddress addr=addrs.nextElement();
+					for(InterfaceAddress ia:ni.getInterfaceAddresses()) {
+						InetAddress addr=ia.getAddress();
 						byte[] b=addr.getAddress();
 						boolean check=true;
 						for(int i=0;i<prefix.length;i++) {
@@ -99,9 +105,11 @@ public class Node {
 						}
 						if(check) {
 							this.addr=addr;
+							this.baddr=ia.getBroadcast();
 							return;
 						}
 					}
+					
 				}
 			}
 		} catch (Exception e) {
