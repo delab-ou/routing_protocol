@@ -73,6 +73,10 @@ public class PacketTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		for(String s:args) {
+			System.out.println(s);
+		}
 	}
 
 }
