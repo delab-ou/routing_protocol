@@ -1,6 +1,7 @@
 package ou.ist.de.protocol.routing;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 
 import ou.ist.de.protocol.node.Node;
 import ou.ist.de.protocol.node.Sender;
@@ -57,6 +58,11 @@ public class FloodingRouting extends RoutingProtocol{
 		p.setSndr(node.getAddress());
 		System.out.println("forwarding "+p.toString());
 		return p;
+	}
+	@Override
+	protected void initialize(HashMap<String, String> params) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

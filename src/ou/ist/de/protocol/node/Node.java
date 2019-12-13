@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import ou.ist.de.protocol.Constants;
 import ou.ist.de.protocol.packet.Packet;
@@ -20,11 +21,16 @@ public class Node {
 	protected InetAddress baddr;
 	protected int port;
 	protected RoutingProtocol rp;
+	protected HashMap<String,String> params;
 
 	public Node() {
 		this(Constants.PORT,new int[] {192,168});
 	}
-
+	public Node(HashMap<String,String> params,int port, int[] IPprefix) {
+		this(port,IPprefix);
+		this.params=params;
+		
+	}
 	public Node(int port, int[] IPprefix) {
 		this.port = port;
 		this.initializeAddress(IPprefix);

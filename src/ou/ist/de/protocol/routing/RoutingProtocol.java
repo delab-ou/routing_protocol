@@ -1,6 +1,7 @@
 package ou.ist.de.protocol.routing;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 
 import ou.ist.de.protocol.node.Node;
 import ou.ist.de.protocol.node.Sender;
@@ -13,6 +14,10 @@ public abstract class RoutingProtocol {
 	public RoutingProtocol() {
 		node=null;
 		s=null;
+	}
+	public RoutingProtocol(HashMap<String,String> params) {
+		super();
+		this.initialize(params);
 	}
 	public RoutingProtocol(Node node, Sender s) {
 		this.node=node;
@@ -29,6 +34,7 @@ public abstract class RoutingProtocol {
 		this.s.send(p);
 	}
 	public abstract void receivePacket(Packet p);
+	protected abstract void initialize(HashMap<String,String> params);
 	protected abstract Packet generateInitialRequestPacket(InetAddress dest);
 	protected abstract Packet generateInitialReplyPacket(Packet p);
 	protected abstract Packet generateForwaringPacket(Packet p);

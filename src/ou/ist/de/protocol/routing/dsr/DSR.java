@@ -1,6 +1,7 @@
 package ou.ist.de.protocol.routing.dsr;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 
 import ou.ist.de.protocol.packet.Packet;
 import ou.ist.de.protocol.routing.RoutingProtocol;
@@ -97,4 +98,10 @@ public class DSR extends RoutingProtocol {
 		return null;
 	}
 
+	@Override
+	protected void initialize(HashMap<String, String> params) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
