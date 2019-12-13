@@ -73,7 +73,7 @@ public class Node {
 		this.baddr=baddr;
 	}
 	public void startRouteEstablishment(InetAddress dest) {
-		this.send(rp.generateInitialRequestPacket(dest));
+		this.rp.startRouteEstablishment(dest);
 	}
 	protected void initializeDatagramSocket() {
 		try {

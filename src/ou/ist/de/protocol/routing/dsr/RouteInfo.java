@@ -73,6 +73,18 @@ public class RouteInfo {
 		}
 		return false;
 	}
+	public InetAddress get(int index) {
+		if(index<this.aladdr.size()) {
+			return this.aladdr.get(index);
+		}
+		return null;
+	}
+	public int size() {
+		if(this.aladdr!=null) {
+			return this.aladdr.size();
+		}
+		return -1;
+	}
 	public String[] getAddrArray() {
 		if (aladdr.isEmpty()) {
 			return null;
