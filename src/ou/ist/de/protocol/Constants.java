@@ -13,4 +13,5 @@ public class Constants {
 	public static long timer;
 	public static boolean wait;
 	public static int FSIZE=500;
+	public static int[] network=new int[] {10,0,0};
 }

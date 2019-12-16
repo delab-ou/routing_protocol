@@ -24,7 +24,11 @@ public class Node {
 	protected HashMap<String,String> params;
 
 	public Node() {
-		this(Constants.PORT,new int[] {192,168});
+		this(Constants.PORT,Constants.network);
+	}
+	public Node(HashMap<String,String> params) {
+		this();
+		this.params=params;
 	}
 	public Node(HashMap<String,String> params,int port, int[] IPprefix) {
 		this(port,IPprefix);
