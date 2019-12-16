@@ -17,16 +17,16 @@ def topology(autoTxPower):
     stas = []
     stanum = 9
 
-    print "*** Creating nodes"
+    print("*** Creating nodes")
     for i in range(stanum):
         stas.append(net.addStation('sta' + str(i+1), position=str(i%3*80)+','+str(i/3*80)+',0', range=100))
 
     net.propagationModel(model="logDistance", exp=4.5)
 
-    print "*** Configuring wifi nodes"
+    print("*** Configuring wifi nodes")
     net.configureWifiNodes()
 
-    print "*** Creating links"
+    print("*** Creating links")
     for i in range(stanum):
         net.addHoc(stas[i], ssid='adhocNet', mode='g', channel=5)
 
@@ -40,15 +40,15 @@ def topology(autoTxPower):
         for i in range(stanum-2):
             stas[i+1].cmd('xterm -e java -cp ../bin ou.ist.de.srp.Main -protocol:DSR -port:10000 -frag:1000 &')
 
-    print "*** Starting network"
+    print("*** Starting network")
     net.build()
 
-    print "*** Running CLI"
+    print("*** Running CLI")
     CLI(net)
 
-    print "*** Run protocol"
+    print("*** Run protocol")
 
-    print "*** Stopping network"
+    print("*** Stopping network")
     net.stop()
 
 
