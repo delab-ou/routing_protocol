@@ -34,11 +34,11 @@ def topology(autoTxPower):
 
     if autoTxPower:
         for i in range(stanum-2):
-            stas[i+1].cmd('xterm -e java -cp ./bin:../ibsas/bin:../jpbc-2.0.0/jars/jpbc-api-2.0.0.jar:../jpbc-2.0.0/jars/jpbc-plaf-2.0.0.jar ou.ist.de.srp.Main rsa:1024:f &')
+            stas[i+1].cmd('xterm -e java -cp ../bin ou.ist.de.srp.Main -protocol:DSR -port:10000 -frag:1000 &')
 
     else:
         for i in range(stanum-2):
-            stas[i+1].cmd('xterm -e java -cp ./bin:../ibsas/bin:../jpbc-2.0.0/jars/jpbc-api-2.0.0.jar:../jpbc-2.0.0/jars/jpbc-plaf-2.0.0.jar ou.ist.de.srp.Main ibsas:a:f &')
+            stas[i+1].cmd('xterm -e java -cp ../bin ou.ist.de.srp.Main -protocol:DSR -port:10000 -frag:1000 &')
 
     print "*** Starting network"
     net.build()
