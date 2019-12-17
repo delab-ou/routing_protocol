@@ -16,6 +16,7 @@ public class DSR extends RoutingProtocol {
 	public void receivePacket(Packet p) {
 		// TODO Auto-generated method stub
 		Packet pkt = null;
+		
 		if (p.getDest().equals(this.node.getAddress())) {
 			if (p.getType() == 0) {
 				pkt = this.generateInitialReplyPacket(p);
