@@ -115,7 +115,9 @@ public class Node {
 						}
 						if(check) {
 							this.addr=addr;
-							this.baddr=ia.getBroadcast();
+							byte[] ba=this.addr.getAddress();
+							ba[3]=(byte)0xFF;
+							this.baddr=InetAddress.getByAddress(ba);
 							return;
 						}
 					}
