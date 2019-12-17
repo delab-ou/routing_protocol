@@ -7,7 +7,10 @@ import ou.ist.de.protocol.packet.Packet;
 import ou.ist.de.protocol.routing.RoutingProtocol;
 
 public class DSR extends RoutingProtocol {
-
+	public static int REQ=0;
+	public static int REP=1;
+	public static int ERR=2;
+	public static int DATA=3;
 	public DSR() {
 		super();
 	}
@@ -19,7 +22,7 @@ public class DSR extends RoutingProtocol {
 		Packet pkt = null;
 		
 		if (p.getDest().equals(this.node.getAddress())) {
-			if (p.getType() == 0) {
+			if (p.getType() == DSR.REQ) {
 				pkt = this.generateInitialReplyPacket(p);
 			}
 			else {
@@ -33,24 +36,37 @@ public class DSR extends RoutingProtocol {
 			this.s.send(pkt);
 		}
 	}
-
-	@Override
-	protected Packet generateInitialRequestPacket(InetAddress dest) {
-		// TODO Auto-generated method stub
+	
+	protected Packet generateInitialRequestPacketBase(InetAddress dest) {
 		Packet p = new Packet();
 		p.setDest(dest);
-		p.setType((byte) 0);
+		p.setType((byte) DSR.REQ);
 		p.setHops(1);
 		p.setSrc(this.node.getAddress());
 		p.setSndr(this.node.getAddress());
 		p.setNext(node.getBroadcastAddress());
+		return p;
+	}
+	@Override
+	protected Packet generateInitialRequestPacket(InetAddress dest) {
+		// TODO Auto-generated method stub
+		Packet p = generateInitialRequestPacketBase(dest);
 		RouteInfo ri = new RouteInfo();
 		ri.addNode(this.node.getAddress());
 		p.setOption(ri.toBytes());
 		//System.err.println("In DSR generateInitialRequestPAcket to "+dest +"\n"+p.toString());
 		return p;
 	}
-
+	
+	protected void generateInitialReplyPacketBase(Packet p, RouteInfo ri) {
+		p.setType((byte) DSR.REP);
+		p.setDest(p.getSrc());
+		p.setSrc(this.node.getAddress());
+		p.setSndr(this.node.getAddress());
+		p.setNext(ri.get(p.getHops() - 1));
+		p.setHops(1);
+		
+	}
 	@Override
 	protected Packet generateInitialReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
@@ -59,12 +75,7 @@ public class DSR extends RoutingProtocol {
 			return null;
 		}
 		ri.addNode(this.node.getAddress());
-		p.setType((byte) 1);
-		p.setDest(p.getSrc());
-		p.setSrc(this.node.getAddress());
-		p.setSndr(this.node.getAddress());
-		p.setNext(ri.get(p.getHops() - 1));
-		p.setHops(1);
+		generateInitialReplyPacketBase(p,ri);
 		p.setOption(ri.toBytes());
 		return p;
 	}
@@ -75,7 +86,7 @@ public class DSR extends RoutingProtocol {
 		System.out.println("p is "+p);
 		RouteInfo ri = new RouteInfo(p.getOption());
 		System.out.println("route info "+ri.toString());
-		if (p.getType() == 0) {
+		if (p.getType() == DSR.REQ) {
 			if (ri.isContained(this.node.getAddress())) {
 				return null;
 			}
@@ -85,7 +96,7 @@ public class DSR extends RoutingProtocol {
 			p.setOption(ri.toBytes());
 			return p;
 		}
-		if (p.getType() == 1) {
+		if (p.getType() == DSR.REP) {
 			System.out.println("In DSR generateForwardingPAcket receved type 1");
 			if (!ri.isContained(this.node.getAddress())) {
 				System.out.println(" not contained");
