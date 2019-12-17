@@ -114,10 +114,16 @@ public class Node {
 							check &= ((b[i]&0x00FF)==prefix[i]);
 						}
 						if(check) {
-							this.addr=addr;
-							byte[] ba=this.addr.getAddress();
-							ba[3]=(byte)0xFF;
-							this.baddr=InetAddress.getByAddress(ba);
+							this.addr=addr;							
+							this.baddr=ia.getBroadcast();
+							byte[] ba=this.baddr.getAddress();
+							if((ba[0]==0)&&(ba[1]==0)&&(ba[2]==0)&&(ba[3]==0)) {
+								ba[0]=(byte)addr.getAddress()[0];
+								ba[1]=(byte)0xff;
+								ba[2]=(byte)0xff;
+								ba[3]=(byte)0xff;
+								this.baddr=InetAddress.getByAddress(ba);
+							}
 							return;
 						}
 					}

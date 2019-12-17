@@ -31,10 +31,11 @@ public class Sender {
 	public void send(Packet p) {
 		alfp.clear();
 		pf.packetFragmentation(alfp, p);
-
+		//System.out.println("In Sender send size is "+alfp.size());
 		for (FragmentedPacket fp : alfp) {
 			byte[] data = fp.toBytes();
 			DatagramPacket dp = new DatagramPacket(data, data.length, fp.getNext(), Constants.PORT);
+			//System.err.println("send packet to "+dp.getAddress());
 			this.send(dp);
 		}
 

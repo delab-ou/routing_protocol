@@ -9,23 +9,25 @@ import ou.ist.de.protocol.Constants;
 public class RouteInfo {
 
 	protected ArrayList<InetAddress> aladdr;
-
+	
 	public RouteInfo() {
 		aladdr = new ArrayList<InetAddress>();
 	}
 
-	public RouteInfo(byte[] ba, int count) {
+	public RouteInfo(byte[] ba) {
 		this();
 		ByteBuffer bb = ByteBuffer.wrap(ba);
+		int count=bb.getInt();
 		byte[] tmp = new byte[Constants.InetAddressLength];
 		try {
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i<count; i++) {
 				bb.get(tmp);
 				aladdr.add(InetAddress.getByAddress(tmp));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void addNode(InetAddress addr) {
@@ -37,33 +39,16 @@ public class RouteInfo {
 			return null;
 		}
 		int length = aladdr.size() * Constants.InetAddressLength;
+		length+=Integer.BYTES;//this is a room for the number of the entries in route info
 		ByteBuffer bb = ByteBuffer.allocate(length);
+		bb.putInt(aladdr.size());
 		for (int i = 0; i < aladdr.size(); i++) {
 			bb.put(aladdr.get(i).getAddress());
 		}
 		return bb.array();
 	}
 
-	public void setBytes(byte[] addrs) {
-		InetAddress tmp = null;
-		byte[] addr = new byte[Constants.InetAddressLength];
-		if (aladdr == null) {
-			aladdr = new ArrayList<InetAddress>();
-		} else {
-			aladdr.clear();
-		}
-		for (int i = 0; i < addrs.length; i++) {
-			addr[i % Constants.InetAddressLength] = addrs[i];
-			if ((i % Constants.InetAddressLength) == 3) {
-				try {
-					tmp = InetAddress.getByAddress(addr);
-					aladdr.add(tmp);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+	
 	public boolean isContained(InetAddress addr) {
 		
 		for(InetAddress ia:this.aladdr) {

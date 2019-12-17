@@ -30,7 +30,9 @@ public abstract class RoutingProtocol {
 		this.s=s;
 	}
 	public void startRouteEstablishment(InetAddress dest) {
+		//System.out.println("In RoutingProtocol start route establishment to "+dest);
 		Packet p=this.generateInitialRequestPacket(dest);
+		//System.out.println("In RoutingProtocol sending packet is "+p.toString());
 		this.s.send(p);
 	}
 	public abstract void receivePacket(Packet p);

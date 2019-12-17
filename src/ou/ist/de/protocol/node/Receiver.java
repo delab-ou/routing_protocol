@@ -37,6 +37,7 @@ public class Receiver implements Runnable{
 		DatagramPacket dp=null;
 		while(loop) {
 			try {
+				//System.out.println("In Receiver run start receiving");
 				dp = new DatagramPacket(new byte[Constants.RCVBUFFER], Constants.RCVBUFFER);
 				ds.receive(dp);
 				//System.out.println(dp+"   "+dp);
@@ -45,6 +46,7 @@ public class Receiver implements Runnable{
 				FragmentedPacket fp=new FragmentedPacket(data);
 				//System.out.println(fp.toString());
 				Packet p=pd.packetDefragmentation(fp);
+				System.out.println("In Receiver run "+((p!=null)?p.toString():"null"));
 				if(p==null) {
 					continue;
 				}

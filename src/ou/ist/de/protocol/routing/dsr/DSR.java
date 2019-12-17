@@ -15,6 +15,7 @@ public class DSR extends RoutingProtocol {
 	@Override
 	public void receivePacket(Packet p) {
 		// TODO Auto-generated method stub
+		System.out.println("In DSR receivedPacket "+p.toString());
 		Packet pkt = null;
 		
 		if (p.getDest().equals(this.node.getAddress())) {
@@ -28,6 +29,7 @@ public class DSR extends RoutingProtocol {
 			pkt = this.generateForwaringPacket(p);
 		}
 		if (pkt != null) {
+			System.out.println("In DSR receivedPacket send "+pkt.toString());
 			this.s.send(pkt);
 		}
 	}
@@ -45,13 +47,14 @@ public class DSR extends RoutingProtocol {
 		RouteInfo ri = new RouteInfo();
 		ri.addNode(this.node.getAddress());
 		p.setOption(ri.toBytes());
+		//System.err.println("In DSR generateInitialRequestPAcket to "+dest +"\n"+p.toString());
 		return p;
 	}
 
 	@Override
 	protected Packet generateInitialReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
-		RouteInfo ri = new RouteInfo(p.getOption(), p.getHops());
+		RouteInfo ri = new RouteInfo(p.getOption());
 		if (ri.isContained(this.node.getAddress())) {
 			return null;
 		}
@@ -69,7 +72,9 @@ public class DSR extends RoutingProtocol {
 	@Override
 	protected Packet generateForwaringPacket(Packet p) {
 		// TODO Auto-generated method stub
-		RouteInfo ri = new RouteInfo(p.getOption(), p.getHops());
+		System.out.println("p is "+p);
+		RouteInfo ri = new RouteInfo(p.getOption());
+		System.out.println("route info "+ri.toString());
 		if (p.getType() == 0) {
 			if (ri.isContained(this.node.getAddress())) {
 				return null;
@@ -81,7 +86,9 @@ public class DSR extends RoutingProtocol {
 			return p;
 		}
 		if (p.getType() == 1) {
+			System.out.println("In DSR generateForwardingPAcket receved type 1");
 			if (!ri.isContained(this.node.getAddress())) {
+				System.out.println(" not contained");
 				return null;
 			}
 			for (int i = 0; i < ri.size(); i++) {
@@ -93,6 +100,7 @@ public class DSR extends RoutingProtocol {
 			p.setSndr(this.node.getAddress());
 			p.setHops(p.getHops()+1);
 			p.setOption(ri.toBytes());
+			System.out.println("In DSR generateForwardingPAcket receved type 1 "+p);
 			return p;
 		}
 

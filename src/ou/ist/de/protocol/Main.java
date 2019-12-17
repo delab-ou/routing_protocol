@@ -29,6 +29,7 @@ public class Main {
 		}
 		Constants.PORT=Integer.valueOf(port);
 		
+		System.out.println("Start port:"+Constants.PORT);
 		Node node=new Node(params);
 		DSR dsr=new DSR();
 		node.setRoutingProtocol(dsr);
@@ -53,6 +54,7 @@ public class Main {
 		}
 		m.setArgs(args);
 		String protocol=m.getParameter("-protocol");
+		System.out.println("Protocol: "+protocol);
 		if(protocol.equalsIgnoreCase("DSR")) {
 			m.runDSR();
 		}
