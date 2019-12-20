@@ -14,13 +14,23 @@ public class SignatureOperation {
 	
 	protected KeyPair kp;
 	protected Signature sig;
-	protected int sigLength;
 	
 	public SignatureOperation() {
 		
 	}
 	public SignatureOperation(HashMap<String,String> params) {
+		String sigBitLength="2048";
+		String index="10";
+	
 		
+		if(params.containsKey("-sigBitLength")) {
+			sigBitLength=params.get("-sigBitLength");
+		}
+		if(params.containsKey("-keyIndex")) {
+			index=params.get("-keyIndex");
+		}
+		String keyFile="rsa"+sigBitLength+"_100keys.properties";
+		this.setKeys(keyFile, index, sigBitLength);
 	}
 	
 	public byte[] sign(RouteInfo ri, Signatures sigs) {
@@ -99,12 +109,12 @@ public class SignatureOperation {
 		try {
 			int index = Integer.valueOf(strindex);
 			System.out.println("key size=" + strkeysize);
-			int keySize = Integer.valueOf(strkeysize);
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(keyFile));
 			KeyPair[] kparray = ((KeyPair[]) ois.readObject());
 			ois.close();
 			kp = kparray[index];
 			sig = Signature.getInstance("MD5WithRSA");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

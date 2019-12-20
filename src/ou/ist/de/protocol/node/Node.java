@@ -138,5 +138,7 @@ public class Node {
 	public void send(Packet p) {
 		this.s.send(p);
 	}
-
+	public HashMap<String,String> getParams(){
+		return params;
+	}
 }

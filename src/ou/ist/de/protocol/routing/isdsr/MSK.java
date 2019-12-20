@@ -1,4 +1,4 @@
-package ou.ist.de.protocol.routing.isdsr.ibsas;
+package ou.ist.de.protocol.routing.isdsr;
 
 import it.unisa.dia.gas.jpbc.Element;
 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import ou.ist.de.protocol.node.Node;
 import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.DSR;
+import ou.ist.de.protocol.routing.isdsr.ISDSR;
 import ou.ist.de.protocol.routing.rsabase.RSABaseSecureRouting;
 
 public class Main {
@@ -58,6 +59,9 @@ public class Main {
 		}
 		if(name.equalsIgnoreCase("RSA")) {
 			return new RSABaseSecureRouting(params);
+		}
+		if(name.equalsIgnoreCase("ISDSR")) {
+			return new ISDSR(params);
 		}
 		return null;
 	}

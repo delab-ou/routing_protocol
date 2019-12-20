@@ -29,4 +29,10 @@ public class IBSASKeyGen {
 			e.printStackTrace();
 		}
 	}
+	public static void main(String[] args) {
+		IBSASKeyGen kg=new IBSASKeyGen();
+		kg.generateKeys("a.properties", "a.keys", 100);
+		kg.generateKeys("a1.properties", "a1.keys", 100);
+		kg.generateKeys("e.properties", "e.keys", 100);
+	}
 }
