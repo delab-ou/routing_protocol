@@ -40,13 +40,15 @@ class TopologyGenerator:
                     ssid='adhocNet',
                     mode='g', channel=5, ht_cap='HT40+')
     net.plotGraph(max_x=800, max_y=800)
-    info("*** Starting network\n")
-    net.build()
 
     return net;
 
   def run(self,net):
     
+    info("*** Starting network\n")
+    net.build()
+
+    #self.command('xterm -e java -cp ./bin ou.ist.de.protocol.Main -protocol:DSR -port:10000 -frag:1000 &');
     info("*** Running CLI\n")
     CLI_wifi(net)
 
@@ -56,8 +58,8 @@ class TopologyGenerator:
   def command(self, cmd):
     num=self.x*self.y;
     for i in range(1,num):
-      print("index:"+str(i)+ "is set cmd:"+cmd);
-      self.stas[i].cmd('xterm -e '+cmd);
+      print("index:"+str(i)+ " is set cmd:"+cmd);
+      self.stas[i].sendCmd(cmd);
 
   def setPromisc(self):
     num=self.x*self.y;
@@ -65,11 +67,12 @@ class TopologyGenerator:
       self.stas[i].cmd('ifconfig sta'+str(i+1)+'-wlan0 promisc');
 
   def command_source(self,cmd):
-    self.stas[0].cmd('xterm -e '+cmd);
+    self.stas[0].cmd('xterm -hold -e '+cmd);
 
 if __name__ == '__main__':
   setLogLevel('info')
-  topo=TopologyGenerator(10,2);
+  topo=TopologyGenerator(3,2);
   net=topo.generate();
   topo.setPromisc();
-  topo.run(net);  
+  topo.run(net);
+  #topo.command('java -cp ./bin ou.ist.de.Main -protocol:DSR -port:10000 -frag:1000 &');

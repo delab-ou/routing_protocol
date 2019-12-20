@@ -26,7 +26,15 @@ public class PacketDefrag {
 			alfp=new ArrayList<FragmentedPacket>();
 			fragmentedPackets.put(h, alfp);
 		}
-		alfp.add(fp);
+		boolean dup=false;
+		for(int i=0;i<alfp.size();i++) {
+			if(fp.index==alfp.get(i).index) {
+				dup=true;
+			}
+		}
+		if(!dup) {
+			alfp.add(fp);
+		}
 		if(alfp.size()==fp.totalCount) {
 			alfp.sort((a,b)-> a.index-b.index);
 			ByteBuffer bb=ByteBuffer.allocate(fp.totalLength);

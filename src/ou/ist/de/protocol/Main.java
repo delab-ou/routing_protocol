@@ -4,11 +4,14 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 import ou.ist.de.protocol.node.Node;
+import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.DSR;
+import ou.ist.de.protocol.routing.rsabase.RSABaseSecureRouting;
 
 public class Main {
 
 	protected HashMap<String,String> params;
+	protected RoutingProtocol rp;
 	
 	public Main() {
 		params=new HashMap<String,String>();
@@ -22,24 +25,52 @@ public class Main {
 	public String getParameter(String key) {
 		return params.get(key);
 	}
-	public void runDSR() {
+	
+	public void initialize() {
 		String port=null;
+		String repeat=null;
+		String fragmentation=null;
 		if(params.containsKey("-port")) {
 			port=this.getParameter("-port");
+			Constants.PORT=Integer.valueOf(port);
 		}
-		Constants.PORT=Integer.valueOf(port);
+		if(params.containsKey("-repeat")) {
+			repeat=this.getParameter("-repeat");
+			Constants.REPEAT=Integer.valueOf(repeat);
+		}
+
+		if(params.containsKey("-frag")) {
+			fragmentation=this.getParameter("-frag");
+			Constants.FSIZE=Integer.valueOf(fragmentation);
+		}
+		String protocol=this.getParameter("-protocol");
+		System.out.println("Protocol: "+protocol);
+		rp=this.setRoutingProtocol(protocol);
+		if(rp == null) {
+			System.out.println("No protocol was set or the protocol name was wrong.");
+			System.exit(0);
+		}
 		
-		System.out.println("Start port:"+Constants.PORT);
+	}
+	public RoutingProtocol setRoutingProtocol(String name) {
+		if(name.equalsIgnoreCase("DSR")) {
+			return new DSR(params);
+		}
+		if(name.equalsIgnoreCase("RSA")) {
+			return new RSABaseSecureRouting(params);
+		}
+		return null;
+	}
+	public void run() {
 		Node node=new Node(params);
-		DSR dsr=new DSR();
-		node.setRoutingProtocol(dsr);
+		node.setRoutingProtocol(rp);
 		node.start();
 		if(params.containsKey("-dest")) {
-		try {
-			node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+			try {
+				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -53,11 +84,8 @@ public class Main {
 			System.exit(0);
 		}
 		m.setArgs(args);
-		String protocol=m.getParameter("-protocol");
-		System.out.println("Protocol: "+protocol);
-		if(protocol.equalsIgnoreCase("DSR")) {
-			m.runDSR();
-		}
+		m.initialize();
+		m.run();
 		
 	}
 

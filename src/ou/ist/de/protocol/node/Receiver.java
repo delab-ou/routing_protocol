@@ -46,7 +46,7 @@ public class Receiver implements Runnable{
 				FragmentedPacket fp=new FragmentedPacket(data);
 				//System.out.println(fp.toString());
 				Packet p=pd.packetDefragmentation(fp);
-				System.out.println("In Receiver run "+((p!=null)?p.toString():"null"));
+				//System.out.println("In Receiver run "+((p!=null)?p.toString():"null"));
 				if(p==null) {
 					continue;
 				}

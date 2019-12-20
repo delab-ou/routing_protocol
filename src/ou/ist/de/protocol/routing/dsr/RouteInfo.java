@@ -16,24 +16,14 @@ public class RouteInfo {
 
 	public RouteInfo(byte[] ba) {
 		this();
-		ByteBuffer bb = ByteBuffer.wrap(ba);
-		int count=bb.getInt();
-		byte[] tmp = new byte[Constants.InetAddressLength];
-		try {
-			for (int i = 0; i<count; i++) {
-				bb.get(tmp);
-				aladdr.add(InetAddress.getByAddress(tmp));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		this.fromBytes(ba);
 	}
-
 	public void addNode(InetAddress addr) {
 		aladdr.add(addr);
 	}
-
+	public int byteLength() {
+		return Integer.BYTES+aladdr.size()*Constants.InetAddressLength;
+	}
 	public byte[] toBytes() {
 		if (aladdr.isEmpty()) {
 			return null;
@@ -47,8 +37,21 @@ public class RouteInfo {
 		}
 		return bb.array();
 	}
-
 	
+	public void fromBytes(byte[] ba) {
+		aladdr.clear();
+		ByteBuffer bb = ByteBuffer.wrap(ba);
+		int count=bb.getInt();
+		byte[] tmp = new byte[Constants.InetAddressLength];
+		try {
+			for (int i = 0; i<count; i++) {
+				bb.get(tmp);
+				aladdr.add(InetAddress.getByAddress(tmp));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public boolean isContained(InetAddress addr) {
 		
 		for(InetAddress ia:this.aladdr) {
@@ -57,6 +60,9 @@ public class RouteInfo {
 			}
 		}
 		return false;
+	}
+	public void clear() {
+		aladdr.clear();
 	}
 	public InetAddress get(int index) {
 		if(index<this.aladdr.size()) {
