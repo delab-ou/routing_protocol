@@ -25,16 +25,15 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 	@Override
 	protected void initialize(HashMap<String, String> params) {
 		// TODO Auto-generated method stub
-		if(params.containsKey("-sigbitlen")) {
+		if (params.containsKey("-sigbitlen")) {
 			this.sigBitLength = Integer.valueOf(params.get("-sigbitlen"));
-		}
-		else {
-			this.sigBitLength=2048;
+		} else {
+			this.sigBitLength = 2048;
 		}
 		ri = new RouteInfo();
 		sigs = new Signatures(this.sigBitLength);
-		this.verifyAll=false;
-		so=new SignatureOperation(params);
+		this.verifyAll = false;
+		so = new SignatureOperation(params);
 	}
 
 	@Override
@@ -43,9 +42,9 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		this.sigs.clear();
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
-		//System.out.println("request in RSA "+p.toString());
-		Packet pkt=this.signingPacket(p);
-		//System.out.println("verify:"+this.verify(p) );
+		// System.out.println("request in RSA "+p.toString());
+		Packet pkt = this.signingPacket(p);
+		// System.out.println("verify:"+this.verify(p) );
 		return pkt;
 	}
 
@@ -56,7 +55,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		if (this.ri.isContained(this.node.getAddress())) {
 			return null;
 		}
-		if(!this.verifyingPacket(p)) {
+		if (!this.verifyingPacket(p)) {
 			System.out.println("verification: false");
 			return null;
 		}
@@ -74,8 +73,8 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		if (this.ri.isContained(this.node.getAddress())) {
 			return null;
 		}
-		if(this.verifyAll) {
-			if(!this.verifyingPacket(p)) {
+		if (this.verifyAll) {
+			if (!this.verifyingPacket(p)) {
 				return null;
 			}
 		}
@@ -89,11 +88,17 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 	protected Packet operateReplyForwardingPacket(Packet p) {
 		// TODO Auto-generated method stub
 		this.separateOption(p);
-		
+
 		if (!this.ri.isContained(this.node.getAddress())) {
 			System.out.println(" not contained");
 			return null;
 		}
+
+		if (p.getDest().equals(this.node.getAddress())) {
+			System.out.println("reply verification:" + this.verifyingPacket(p));
+			return null;
+		}
+
 		for (int i = 0; i < this.ri.size(); i++) {
 			if (this.ri.get(i).equals(this.node.getAddress())) {
 				p.setNext(this.ri.get(i - 1));
@@ -102,9 +107,10 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		}
 		p.setSndr(this.node.getAddress());
 		p.setHops(p.getHops() + 1);
-		
+
 		return p;
 	}
+
 	protected void separateOption(Packet p) {
 		ri.clear();
 		sigs.clear();
@@ -115,8 +121,9 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		sigs.fromOption(p.getOption());
 
 	}
+
 	public Packet signingPacket(Packet p) {
-		byte[] s=so.sign(this.ri, this.sigs);
+		byte[] s = so.sign(this.ri, this.sigs);
 		sigs.add(s);
 		ByteBuffer bb = ByteBuffer.allocate(this.ri.byteLength() + sigs.byteLength());
 		bb.put(this.ri.toBytes());
@@ -124,20 +131,20 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		p.setOption(bb.array());
 		return p;
 	}
-	
+
 	public boolean verifyingPacket(Packet p) {
 		return so.verify(this.ri, this.sigs);
 	}
 
 	protected void printByteArray(byte[] ba) {
-		if(ba==null) {
+		if (ba == null) {
 			System.out.println("[null]");
 		}
-		String s="["+ba[0];
-		for(int i=1;i<ba.length;i++) {
-			s+=(","+ba[i]);
+		String s = "[" + ba[0];
+		for (int i = 1; i < ba.length; i++) {
+			s += ("," + ba[i]);
 		}
-		System.out.println(s+"]");
+		System.out.println(s + "]");
 	}
 
 }

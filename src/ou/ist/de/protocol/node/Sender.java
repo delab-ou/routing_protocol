@@ -30,7 +30,7 @@ public class Sender {
 
 	public void send(Packet p) {
 		alfp.clear();
-		//System.out.println("In Sender sending packet is "+p.toString());
+		System.out.println("In Sender sending packet is "+p.toString());
 		pf.packetFragmentation(alfp, p);
 		//System.out.println("In Sender send size is "+alfp.size());
 		for (FragmentedPacket fp : alfp) {

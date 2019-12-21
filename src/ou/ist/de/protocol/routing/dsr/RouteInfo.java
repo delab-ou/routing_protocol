@@ -28,9 +28,8 @@ public class RouteInfo {
 		if (aladdr.isEmpty()) {
 			return null;
 		}
-		int length = aladdr.size() * Constants.InetAddressLength;
-		length+=Integer.BYTES;//this is a room for the number of the entries in route info
-		ByteBuffer bb = ByteBuffer.allocate(length);
+		
+		ByteBuffer bb = ByteBuffer.allocate(this.byteLength());
 		bb.putInt(aladdr.size());
 		for (int i = 0; i < aladdr.size(); i++) {
 			bb.put(aladdr.get(i).getAddress());
@@ -38,20 +37,23 @@ public class RouteInfo {
 		return bb.array();
 	}
 	
-	public void fromBytes(byte[] ba) {
+	public int fromBytes(byte[] ba) {
 		aladdr.clear();
 		ByteBuffer bb = ByteBuffer.wrap(ba);
 		int count=bb.getInt();
 		byte[] tmp = new byte[Constants.InetAddressLength];
+		
 		try {
-			for (int i = 0; i<count; i++) {
+			for(int i=0; i<count; i++) {
 				bb.get(tmp);
 				aladdr.add(InetAddress.getByAddress(tmp));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return bb.position();
 	}
+	
 	public boolean isContained(InetAddress addr) {
 		
 		for(InetAddress ia:this.aladdr) {

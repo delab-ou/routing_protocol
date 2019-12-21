@@ -79,6 +79,7 @@ public abstract class RoutingProtocol {
 				pkt = this.generateInitialReply(p);
 			}
 			else {
+				this.generateForwardingPacket(p);
 				System.out.println("route is established");
 			}
 		} else {
