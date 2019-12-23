@@ -72,6 +72,8 @@ public class SignatureOperation {
 	}
 	
 	protected boolean verify(RouteInfo ri, Signatures sigs, int limit) {
+		
+		//
 		if (limit <= 0) {
 			return false;
 		}
@@ -79,7 +81,7 @@ public class SignatureOperation {
 		//System.out.println("varify data riBytes");
 		//this.printByteArray(riBytes);
 		byte[] sigBytes=sigs.toBytes();
-		int riLength=limit*Constants.InetAddressLength;
+		int riLength=ri.size()*Constants.InetAddressLength;
 		int sigLength=(limit-1)*sigs.sigLength;
 		//System.out.println("---rilen="+riLength+" siglen="+sigLength);
 		ByteBuffer bb=ByteBuffer.allocate(riLength+sigLength);
