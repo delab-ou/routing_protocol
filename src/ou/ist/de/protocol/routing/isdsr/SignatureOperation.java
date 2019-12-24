@@ -36,6 +36,8 @@ public class SignatureOperation {
 		if(params.containsKey("-keyfile")) {
 			keyfile=params.get("-keyfile");
 		}
+		PairingFactory.getInstance().setUsePBCWhenPossible(true);
+		System.out.println("use pbc:"+PairingFactory.getInstance().isPBCAvailable());
 		this.setPairing(paramFile);
 		this.setKeys(keyfile, "5");
 		this.keyDerivation(uid);

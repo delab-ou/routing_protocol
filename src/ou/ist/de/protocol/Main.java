@@ -3,6 +3,7 @@ package ou.ist.de.protocol;
 import java.net.InetAddress;
 import java.util.HashMap;
 
+import ou.ist.de.protocol.node.ExpNode;
 import ou.ist.de.protocol.node.Node;
 import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.DSR;
@@ -71,16 +72,13 @@ public class Main {
 		}
 		return null;
 	}
+	
 	public void run() {
 		Node node=new Node(params);
 		node.setRoutingProtocol(rp);
 		node.start();
 		if(params.containsKey("-dest")) {
 			try {
-				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-				Thread.sleep(500);
-				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-				Thread.sleep(500);
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
 			}catch(Exception e) {
 				e.printStackTrace();
@@ -89,7 +87,18 @@ public class Main {
 		
 	}
 	public void run(int repeat) {
-		
+		ExpNode node=new ExpNode(params);
+		node.setRepeatTimes(repeat);
+		node.setRoutingProtocol(rp);
+		node.start();
+		ExpNode.interval_milisec=500;
+		if(params.containsKey("-dest")) {
+			try {
+				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -102,7 +111,7 @@ public class Main {
 		}
 		m.setArgs(args);
 		m.initialize();
-		m.run();
+		m.run(100);
 		
 	}
 

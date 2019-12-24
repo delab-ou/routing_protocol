@@ -68,8 +68,7 @@ class TopologyGenerator:
 
     self.sendCommand();
     info("*** Running CLI\n")
-    CLI_wifi(net)
-
+    cliwifi=CLI_wifi(net)
     info("*** Stopping network\n")
     net.stop()
 

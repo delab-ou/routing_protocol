@@ -85,6 +85,9 @@ public class Node {
 	public void startRouteEstablishment(InetAddress dest) {
 		this.rp.startRouteEstablishment(dest);
 	}
+	public void routeEstablished(Packet p) {
+		System.out.println("route is established");
+	}
 	protected void initializeDatagramSocket() {
 		try {
 			// dsR = new DatagramSocket(this.port);

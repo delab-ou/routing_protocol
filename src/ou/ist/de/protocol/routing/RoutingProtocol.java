@@ -1,6 +1,7 @@
 package ou.ist.de.protocol.routing;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import ou.ist.de.protocol.Constants;
@@ -12,7 +13,7 @@ public abstract class RoutingProtocol {
 	protected Node node;
 	protected Sender s;
 	protected int seqnum;
-	
+	protected ArrayList<String> cache;
 	public RoutingProtocol() {
 		node=null;
 		s=null;
@@ -20,6 +21,7 @@ public abstract class RoutingProtocol {
 	}
 	public RoutingProtocol(HashMap<String,String> params) {
 		this();
+		cache=new ArrayList<String>();
 		this.initialize(params);
 	}
 	
@@ -29,11 +31,12 @@ public abstract class RoutingProtocol {
 	public void setSender(Sender s) {
 		this.s=s;
 	}
-	public void startRouteEstablishment(InetAddress dest) {
+	public Packet startRouteEstablishment(InetAddress dest) {
 		//System.out.println("In RoutingProtocol start route establishment to "+dest);
 		Packet p=this.generateInitialRequest(dest);
 		//System.out.println("In RoutingProtocol sending packet is "+p.toString());
 		this.s.send(p);
+		return p;
 	}
 	protected Packet generateInitialRequest(InetAddress dest) {
 		Packet p=new Packet();
@@ -60,6 +63,11 @@ public abstract class RoutingProtocol {
 	}
 	protected Packet generateForwardingPacket(Packet p) {
 		if(p.getType()==Constants.REQ) {
+			String reqCache=""+p.getType()+p.getSrc().toString()+p.getDest().toString()+p.getSeq();
+			if(cache.contains(reqCache)) {
+				return null;
+			}
+			cache.add(reqCache);
 			return operateRequestForwardingPacket(p);
 		}
 		else if(p.getType()==Constants.REP) {
@@ -80,7 +88,7 @@ public abstract class RoutingProtocol {
 			}
 			else {
 				this.generateForwardingPacket(p);
-				System.out.println("route is established");
+				node.routeEstablished(p);
 			}
 		} else {
 			pkt = this.generateForwardingPacket(p);
