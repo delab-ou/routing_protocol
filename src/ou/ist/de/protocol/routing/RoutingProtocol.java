@@ -86,7 +86,7 @@ public abstract class RoutingProtocol {
 			pkt = this.generateForwardingPacket(p);
 		}
 		if (pkt != null) {
-			System.out.println("In RoutingProtocol receivedPacket send "+pkt.toString());
+			//System.out.println("In RoutingProtocol receivedPacket send "+pkt.toString());
 			this.s.send(pkt);
 		}
 	}

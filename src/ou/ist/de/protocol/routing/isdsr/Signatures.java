@@ -44,7 +44,7 @@ public class Signatures {
 		byte[] sigBytes = null;
 		for (int i = 0; i < 3; i++) {
 			length = bb.getInt();
-			System.out.println(length); //add
+			//System.out.println(length); //add
 			sigBytes = new byte[length];
 			bb.get(sigBytes);
 			setSig(i, pairing.getG1().newElementFromBytes(sigBytes));

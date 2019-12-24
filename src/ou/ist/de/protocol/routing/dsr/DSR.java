@@ -54,6 +54,9 @@ public class DSR extends RoutingProtocol {
 	@Override
 	protected Packet operateReplyForwardingPacket(Packet p) {
 		// TODO Auto-generated method stub
+		if(p.getDest().equals(this.node.getAddress())) {
+			return null;
+		}
 		RouteInfo ri = new RouteInfo(p.getOption());
 		if (!ri.isContained(this.node.getAddress())) {
 			System.out.println(" not contained");

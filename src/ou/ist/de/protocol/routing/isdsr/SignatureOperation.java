@@ -48,7 +48,7 @@ public class SignatureOperation {
 		String uid=ri.get(ri.size()-1).toString();
 		String msg=ri.getAddrSequence();
 		
-		System.out.println("sign:uid=" + uid + " msg=" + msg);
+		//System.out.println("sign:uid=" + uid + " msg=" + msg);
 		Element r, x;
 		// ElementPowPreProcessing pppmpkg1=mpk.g1.getElementPowPreProcessing();
 		// Element immpkg1=mpk.g1.getImmutable();
@@ -116,7 +116,7 @@ public class SignatureOperation {
 	
 	public void keyDerivation(String uid) {
 
-		System.out.println("key derivation uid=" + uid);
+		//System.out.println("key derivation uid=" + uid);
 		Element e1 = Hash(HashType.H1, uid);// Hash1(uidByte);
 		Element e2 = Hash(HashType.H2, uid);// Hash2(uidByte);
 		// System.out.println("generate sk " + uid);

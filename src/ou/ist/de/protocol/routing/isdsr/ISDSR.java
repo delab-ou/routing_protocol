@@ -84,6 +84,10 @@ public class ISDSR extends RoutingProtocol {
 			System.out.println(" not contained");
 			return null;
 		}
+		if (p.getDest().equals(this.node.getAddress())) {
+			System.out.println("reply verification:" + this.verifyingPacket(p));
+			return null;
+		}
 		for (int i = 0; i < this.ri.size(); i++) {
 			if (this.ri.get(i).equals(this.node.getAddress())) {
 				p.setNext(this.ri.get(i - 1));

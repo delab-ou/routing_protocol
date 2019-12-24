@@ -80,6 +80,8 @@ public class SRDP extends RoutingProtocol {
 	@Override
 	protected Packet operateReplyForwardingPacket(Packet p) {
 		// TODO Auto-generated method stub
+		System.out.println("in srdp op reply "+p.toString());
+		this.separateOption(p);
 		if (!this.ri.isContained(this.node.getAddress())) {
 			System.out.println(" not contained");
 			return null;
@@ -87,6 +89,7 @@ public class SRDP extends RoutingProtocol {
 
 		if (p.getDest().equals(this.node.getAddress())) {
 			System.out.println("reply verification:" + this.verifyingPacket(p));
+			System.out.println(p.toString());
 			return null;
 		}
 		if(this.checkReqCache(p)) {

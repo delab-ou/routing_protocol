@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-"""This example shows how to work in adhoc mode
-
-sta1 <---> sta2 <---> sta3"""
-
 import sys
 
 from mininet.log import setLogLevel, info
@@ -17,6 +13,18 @@ class TopologyGenerator:
   def __init__(self,width=3,height=3):
     self.x=width;
     self.y=height;
+    self.prot="";
+  def params(self,args):
+    for param in args:
+      if param.startswith("-w"):
+        self.x=int(param.split(":")[1]);
+      if param.startswith("-h"):
+        self.y=int(param.split(":")[1]);
+      if param.startswith("-p"):
+        self.prot=param.split(":")[1];
+
+    print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
+
   def generate(self):
     net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=3)
     num=self.x*self.y;
@@ -73,12 +81,13 @@ if __name__ == '__main__':
   setLogLevel('info')
   args=sys.argv;
 
-  if len(args) != 3:
+  if len(args) != 4:
     print("usage python location.py -w:width -h:height -p:protocol");
   
   
   topo=TopologyGenerator(3,3);
-  net=topo.generate();
-  topo.setPromisc();
-  topo.run(net);
+  topo.params(args);
+  #net=topo.generate();
+  #topo.setPromisc();
+  #topo.run(net);
   #topo.command('java -cp ./bin ou.ist.de.Main -protocol:DSR -port:10000 -frag:1000 &');

@@ -8,6 +8,7 @@ import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.DSR;
 import ou.ist.de.protocol.routing.isdsr.ISDSR;
 import ou.ist.de.protocol.routing.rsabase.RSABaseSecureRouting;
+import ou.ist.de.protocol.routing.srdp.SRDP;
 
 public class Main {
 
@@ -63,6 +64,9 @@ public class Main {
 		if(name.equalsIgnoreCase("ISDSR")) {
 			return new ISDSR(params);
 		}
+		if(name.equalsIgnoreCase("SRDP")) {
+			return new SRDP(params);
+		}
 		return null;
 	}
 	public void run() {
@@ -72,10 +76,17 @@ public class Main {
 		if(params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
+				Thread.sleep(500);
+				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
+				Thread.sleep(500);
+				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
+	}
+	public void run(int repeat) {
 		
 	}
 	public static void main(String[] args) {

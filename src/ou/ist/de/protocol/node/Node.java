@@ -22,7 +22,7 @@ public class Node {
 	protected int port;
 	protected RoutingProtocol rp;
 	protected HashMap<String,String> params;
-
+	
 	public Node() {
 		this(Constants.PORT,Constants.network);
 	}
