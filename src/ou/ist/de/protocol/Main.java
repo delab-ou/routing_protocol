@@ -28,6 +28,7 @@ public class Main {
 		return params.get(key);
 	}
 	
+	
 	public void initialize() {
 		String port=null;
 		String repeat=null;
@@ -52,9 +53,10 @@ public class Main {
 			System.out.println("No protocol was set or the protocol name was wrong.");
 			System.exit(0);
 		}
-		
 	}
+	
 	public RoutingProtocol setRoutingProtocol(String name) {
+		System.out.println("target protocol is "+name);
 		if(name.equalsIgnoreCase("DSR")) {
 			return new DSR(params);
 		}

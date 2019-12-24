@@ -14,6 +14,8 @@ class TopologyGenerator:
     self.x=width;
     self.y=height;
     self.prot="";
+    self.jars=["jpbc-pbc-2.0.0.jar","jpbc-plaf-2.0.0.jar","jpbc-pbc-2.0.0.jar","jna-3.2.5.jar"];
+
   def params(self,args):
     for param in args:
       if param.startswith("-w"):
@@ -25,6 +27,14 @@ class TopologyGenerator:
 
     print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
 
+  def makeCommand(self,frag,jf):
+    cp="./bin";
+    if self.prot.upper() == "ISDSR":
+      for jar in self.jars:
+        cp+=":"+jf+jar;
+    print("prot="+self.prot);
+    self.cmdf="java -cp "+cp+" ou.ist.de.protocol.Main -protocol:"+self.prot.upper()+" -port:10000 -frag:"+frag+" &";
+  
   def generate(self):
     net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=3)
     num=self.x*self.y;
@@ -56,18 +66,18 @@ class TopologyGenerator:
     info("*** Starting network\n")
     net.build()
 
-    #self.command('xterm -e java -cp ./bin ou.ist.de.protocol.Main -protocol:DSR -port:10000 -frag:1000 &');
+    self.sendCommand();
     info("*** Running CLI\n")
     CLI_wifi(net)
 
     info("*** Stopping network\n")
     net.stop()
 
-  def command(self, cmd):
+  def sendCommand(self):
     num=self.x*self.y;
     for i in range(1,num):
-      print("index:"+str(i)+ " is set cmd:"+cmd);
-      self.stas[i].sendCmd(cmd);
+      print("index:"+str(i)+ " is set cmd:"+self.cmdf);
+      self.stas[i].sendCmd("xterm -e "+self.cmdf);
 
   def setPromisc(self):
     num=self.x*self.y;
@@ -85,9 +95,10 @@ if __name__ == '__main__':
     print("usage python location.py -w:width -h:height -p:protocol");
   
   
-  topo=TopologyGenerator(3,3);
+  topo=TopologyGenerator();
   topo.params(args);
-  #net=topo.generate();
-  #topo.setPromisc();
-  #topo.run(net);
+  topo.makeCommand("1000","../tools/jpbc/jars/");
+  net=topo.generate();
+  topo.setPromisc();
+  topo.run(net);
   #topo.command('java -cp ./bin ou.ist.de.Main -protocol:DSR -port:10000 -frag:1000 &');
