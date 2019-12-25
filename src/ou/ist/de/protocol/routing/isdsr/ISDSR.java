@@ -15,7 +15,7 @@ public class ISDSR extends RoutingProtocol {
 	protected boolean verifyAll;
 	
 	public ISDSR(HashMap<String,String> params) {
-		this.initialize(params);
+		super(params);
 	}
 	@Override
 	protected void initialize(HashMap<String, String> params) {
@@ -27,11 +27,13 @@ public class ISDSR extends RoutingProtocol {
 	@Override
 	public void setNode(Node node) {
 		this.node=node;
-		so=new SignatureOperation(node.getParams(), this.node.getAddress().toString());
+		System.out.println(this.node.toString()+":"+this.node.getAddress());
+		so=new SignatureOperation(this.node.getParams(), this.node.getAddress().toString());
 	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
 		// TODO Auto-generated method stub
+		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
 		sigs.fromBytes(null, so.pairing);
 		Packet pkt=signingPacket(p);

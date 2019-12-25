@@ -14,4 +14,5 @@ public class Constants {
 	public static int FSIZE=500;
 	public static int[] network=new int[] {10,0,0};
 	public static int REPEAT=1;
+	public static long TIMEOUT=10000;
 }

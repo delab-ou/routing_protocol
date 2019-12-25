@@ -95,10 +95,13 @@ public class Main {
 		if(params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
+				Thread.sleep(10000);
+				node.writeResults();
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -111,7 +114,7 @@ public class Main {
 		}
 		m.setArgs(args);
 		m.initialize();
-		m.run(100);
+		m.run(2000);
 		
 	}
 

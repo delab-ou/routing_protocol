@@ -13,7 +13,7 @@ public abstract class RoutingProtocol {
 	protected Node node;
 	protected Sender s;
 	protected int seqnum;
-	protected ArrayList<String> cache;
+	protected HashMap<String,Long> cache;
 	public RoutingProtocol() {
 		node=null;
 		s=null;
@@ -21,7 +21,7 @@ public abstract class RoutingProtocol {
 	}
 	public RoutingProtocol(HashMap<String,String> params) {
 		this();
-		cache=new ArrayList<String>();
+		cache=new HashMap<String,Long>();
 		this.initialize(params);
 	}
 	
@@ -62,12 +62,16 @@ public abstract class RoutingProtocol {
 		
 	}
 	protected Packet generateForwardingPacket(Packet p) {
+		Long t=null;
 		if(p.getType()==Constants.REQ) {
 			String reqCache=""+p.getType()+p.getSrc().toString()+p.getDest().toString()+p.getSeq();
-			if(cache.contains(reqCache)) {
-				return null;
+			t=new Long(System.currentTimeMillis());
+			if(cache.containsKey(reqCache)) {
+				if((t-cache.get(reqCache))<Constants.TIMEOUT) {
+					return null;
+				}
 			}
-			cache.add(reqCache);
+			cache.put(reqCache, t);
 			return operateRequestForwardingPacket(p);
 		}
 		else if(p.getType()==Constants.REP) {

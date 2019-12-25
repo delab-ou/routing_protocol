@@ -20,7 +20,6 @@ public class SRDP extends RoutingProtocol {
 	
 	public SRDP(HashMap<String,String> params) {
 		super(params);
-		this.initialize(params);
 		
 		
 	}
