@@ -13,109 +13,119 @@ import ou.ist.de.protocol.routing.srdp.SRDP;
 
 public class Main {
 
-	protected HashMap<String,String> params;
+	protected HashMap<String, String> params;
 	protected RoutingProtocol rp;
-	
+
 	public Main() {
-		params=new HashMap<String,String>();
+		params = new HashMap<String, String>();
 	}
+
 	public void setArgs(String[] args) {
-		for(int i=0;i<args.length;i++) {
-			String[] t=args[i].split(":");
+		for (int i = 0; i < args.length; i++) {
+			String[] t = args[i].split(":");
 			params.put(t[0], t[1]);
 		}
 	}
+
 	public String getParameter(String key) {
 		return params.get(key);
 	}
-	
-	
+
 	public void initialize() {
-		String port=null;
-		String repeat=null;
-		String fragmentation=null;
-		if(params.containsKey("-port")) {
-			port=this.getParameter("-port");
-			Constants.PORT=Integer.valueOf(port);
+		String port = null;
+		String repeat = null;
+		String fragmentation = null;
+		if (params.containsKey("-port")) {
+			port = this.getParameter("-port");
+			Constants.PORT = Integer.valueOf(port);
 		}
-		if(params.containsKey("-repeat")) {
-			repeat=this.getParameter("-repeat");
-			Constants.REPEAT=Integer.valueOf(repeat);
+		if (params.containsKey("-repeat")) {
+			repeat = this.getParameter("-repeat");
+			Constants.REPEAT = Integer.valueOf(repeat);
 		}
 
-		if(params.containsKey("-frag")) {
-			fragmentation=this.getParameter("-frag");
-			Constants.FSIZE=Integer.valueOf(fragmentation);
+		if (params.containsKey("-frag")) {
+			fragmentation = this.getParameter("-frag");
+			Constants.FSIZE = Integer.valueOf(fragmentation);
 		}
-		String protocol=this.getParameter("-protocol");
-		System.out.println("Protocol: "+protocol);
-		rp=this.setRoutingProtocol(protocol);
-		if(rp == null) {
+		String protocol = this.getParameter("-protocol");
+		System.out.println("Protocol: " + protocol);
+		rp = this.setRoutingProtocol(protocol);
+		if (rp == null) {
 			System.out.println("No protocol was set or the protocol name was wrong.");
 			System.exit(0);
 		}
 	}
-	
+
 	public RoutingProtocol setRoutingProtocol(String name) {
-		System.out.println("target protocol is "+name);
-		if(name.equalsIgnoreCase("DSR")) {
+		System.out.println("target protocol is " + name);
+		if (name.equalsIgnoreCase("DSR")) {
 			return new DSR(params);
 		}
-		if(name.equalsIgnoreCase("RSA")) {
+		if (name.equalsIgnoreCase("RSA")) {
 			return new RSABaseSecureRouting(params);
 		}
-		if(name.equalsIgnoreCase("ISDSR")) {
+		if (name.equalsIgnoreCase("ISDSR")) {
 			return new ISDSR(params);
 		}
-		if(name.equalsIgnoreCase("SRDP")) {
+		if (name.equalsIgnoreCase("SRDP")) {
 			return new SRDP(params);
 		}
 		return null;
 	}
-	
+
 	public void run() {
-		Node node=new Node(params);
+
+		Node node = new Node(params);
 		node.setRoutingProtocol(rp);
 		node.start();
-		if(params.containsKey("-dest")) {
+		if (params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-			}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	public void run(int repeat) {
-		ExpNode node=new ExpNode(params);
-		node.setRepeatTimes(repeat);
+
+	public void runRepeat() {
+		ExpNode.interval_milisec=2000;
+		ExpNode node = new ExpNode(params);
+		node.setRepeatTimes(Integer.valueOf(params.get("-repeat")));
 		node.setRoutingProtocol(rp);
 		node.start();
-		ExpNode.interval_milisec=500;
-		if(params.containsKey("-dest")) {
+		if (params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-				Thread.sleep(10000);
+				Thread.sleep(120000);
 				node.writeResults();
-			}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
 	}
+
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Main m=new Main();
-		
-		//java ou.ist.de.protocol.Main -protocol:DSR -port:000 -dest:10.0.0.0 -frag:1000
-		if(args.length<2) {
-			System.out.println("usage java ou.ist.de.protocol.Main -protocol:{DSR|ISDSR|SRDP|RSA} -port:portnum -frag:size of fragmentation -dest:destination ip");
+		Main m = new Main();
+
+		// java ou.ist.de.protocol.Main -protocol:DSR -port:000 -dest:10.0.0.0
+		// -frag:1000
+		if (args.length < 2) {
+			System.out.println(
+					"usage java ou.ist.de.protocol.Main -protocol:{DSR|ISDSR|SRDP|RSA} -port:portnum -frag:size of fragmentation -dest:destination ip");
 			System.exit(0);
 		}
 		m.setArgs(args);
 		m.initialize();
-		m.run(2000);
-		
+		if (m.params.containsKey("-repeat")) {
+			m.runRepeat();
+		} else {
+			m.run();
+		}
+
 	}
 
 }

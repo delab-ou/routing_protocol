@@ -51,7 +51,7 @@ public class ExpNode extends Node {
 	}
 
 	public void routeEstablished(Packet p) {
-		System.out.println("route is established");
+		System.out.println("---------- route is established "+p.getHops()+" hops----------");
 		String key = "src:" + p.getDest().toString() + ";dest:" + p.getSrc().toString() + ";seq:" + p.getSeq();
 		System.out.println(key);
 		if (alpd.containsKey(key)) {
@@ -93,9 +93,9 @@ public class ExpNode extends Node {
 			rtt=0;
 			key = "src:" + this.addr.toString() + ";dest:" + this.dest.toString() + ";seq:" + i;
 			al=this.alpd.get(key);
-			System.out.println("seq"+i+" array size="+al.size());
+			System.out.println("seq:"+i+" array size="+al.size());
 			if(al.size()==1) {
-				System.out.println("no route established");
+				//System.out.println("no route established");
 				continue;
 			}
 			received++;

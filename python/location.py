@@ -28,7 +28,8 @@ class TopologyGenerator:
     print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
 
   def generate(self):
-    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=3)
+    #net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=2)
+    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference)
     num=self.x*self.y;
     
     info("*** Creating nodes\n")
@@ -46,9 +47,8 @@ class TopologyGenerator:
 
     print("*** Creating links")
     for i in range(num):
-        net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',
-                    ssid='adhocNet',
-                    mode='g', channel=5, ht_cap='HT40+')
+        net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='a', channel=5, ht_cap='HT40+')
+        #net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5)
     net.plotGraph(max_x=800, max_y=800)
 
     return net;
@@ -67,14 +67,17 @@ class TopologyGenerator:
   def sendCommand(self):
     num=self.x*self.y;
     for i in range(1,num):
-      print("index:"+str(i)+ " is set cmd: "+self.prot.lower+".sh");
+      print("index:"+str(i)+ " is set cmd: "+self.prot.lower()+".sh");
       #self.stas[i].sendCmd("xterm -e "+self.cmdf);
       self.stas[i].sendCmd("xterm -hold -e bash "+self.prot.lower()+".sh &");
 
   def setPromisc(self):
+    info("*** Interface configuration ***")
     num=self.x*self.y;
     for i in range(num):
       self.stas[i].cmd('ifconfig sta'+str(i+1)+'-wlan0 promisc');
+      self.stas[i].cmd('iwconfig sta'+str(i+1)+'-wlan0 rts off');
+      self.stas[i].cmd('iwconfig sta'+str(i+1)+'-wlan0 power off');
 
   def command_source(self,cmd):
     self.stas[0].cmd('xterm -hold -e '+cmd);

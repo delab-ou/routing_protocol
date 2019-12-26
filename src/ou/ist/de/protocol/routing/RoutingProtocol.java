@@ -68,6 +68,7 @@ public abstract class RoutingProtocol {
 			t=new Long(System.currentTimeMillis());
 			if(cache.containsKey(reqCache)) {
 				if((t-cache.get(reqCache))<Constants.TIMEOUT) {
+					//System.out.println("cached");
 					return null;
 				}
 			}
@@ -84,8 +85,9 @@ public abstract class RoutingProtocol {
 	
 	public void receivePacket(Packet p) {
 		//System.out.println("In RoutingProtocol receivedPacket "+p.toString());
+		long t=System.currentTimeMillis();
 		Packet pkt = null;
-		
+		//System.out.println("receive from "+p.getSndr()+" seq:"+p.getSeq()+" hops:"+p.getHops()+" type:"+p.getType());
 		if (p.getDest().equals(this.node.getAddress())) {
 			if (p.getType() == Constants.REQ) {
 				pkt = this.generateInitialReply(p);
@@ -101,6 +103,7 @@ public abstract class RoutingProtocol {
 			//System.out.println("In RoutingProtocol receivedPacket send "+pkt.toString());
 			this.s.send(pkt);
 		}
+		System.out.println(this.node.getAddress().toString().split("\\.")[3]+" processing time is "+(System.currentTimeMillis()-t)+" packet length="+p.getSize());
 	}
 	protected abstract void initialize(HashMap<String,String> params);
 	protected abstract Packet operateRequestPacket(Packet p);

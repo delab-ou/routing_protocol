@@ -20,16 +20,8 @@ public class SignatureOperation {
 		
 	}
 	public SignatureOperation(HashMap<String,String> params) {
-		String sigBitLength="2048";
-		String index="10";
-	
-		
-		if(params.containsKey("-sigBitLength")) {
-			sigBitLength=params.get("-sigBitLength");
-		}
-		if(params.containsKey("-keyIndex")) {
-			index=params.get("-keyIndex");
-		}
+		String sigBitLength=params.get(Constants.ARG_SIG_BIT_LENGTH);
+		String index=params.get(Constants.ARG_KEY_INDEX);
 		String keyFile="rsa"+sigBitLength+"_100keys.properties";
 		this.setKeys(keyFile, index, sigBitLength);
 	}
@@ -63,7 +55,7 @@ public class SignatureOperation {
 	}
 	public boolean verify(RouteInfo ri, Signatures sigs) {
 		boolean ret = true;
-		System.out.println("signature length ="+sigs.size());
+		//System.out.println("signature length ="+sigs.size());
 		for (int i = 1; ret && (i <= (sigs.size())); i++) {
 			ret &= verify(ri, sigs, i);
 			System.out.println(i + ":" + ret);
@@ -111,7 +103,7 @@ public class SignatureOperation {
 	protected void setKeys(String keyFile, String strindex, String strkeysize) {
 		try {
 			int index = Integer.valueOf(strindex);
-			System.out.println("key size=" + strkeysize);
+			//System.out.println("key size=" + strkeysize);
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(keyFile));
 			KeyPair[] kparray = ((KeyPair[]) ois.readObject());
 			ois.close();

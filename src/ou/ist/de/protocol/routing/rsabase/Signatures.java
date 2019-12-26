@@ -30,18 +30,11 @@ public class Signatures {
 		bb.position(Integer.BYTES+num*Constants.InetAddressLength);
 		byte[] sig=null;
 		while(bb.limit()>bb.position()) {
-			System.out.println("limit="+bb.limit()+" pos="+bb.position()+" siglength="+this.sigLength);
+			//System.out.println("limit="+bb.limit()+" pos="+bb.position()+" siglength="+this.sigLength);
 			sig=new byte[sigLength];
 			bb.get(sig);
 			sigs.add(sig);
 		}
-	}
-	public void fromOption(byte[] opt, int offset) {
-		byte[] tmp=new byte[(opt.length-offset)];
-		ByteBuffer bb=ByteBuffer.wrap(opt);
-		bb.position(offset);
-		bb.get(tmp);
-		this.fromBytes(tmp);
 	}
 	protected void fromBytes(byte[] bs) {
 		sigs.clear();

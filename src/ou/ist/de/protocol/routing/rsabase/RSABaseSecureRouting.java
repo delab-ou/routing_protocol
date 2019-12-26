@@ -3,13 +3,12 @@ package ou.ist.de.protocol.routing.rsabase;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
+import ou.ist.de.protocol.Constants;
 import ou.ist.de.protocol.packet.Packet;
 import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
 
 public class RSABaseSecureRouting extends RoutingProtocol {
-	protected int keySize;
-	protected int sigBitLength;
 	protected RouteInfo ri;
 	protected Signatures sigs;
 	protected boolean verifyAll;
@@ -25,17 +24,22 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 	@Override
 	protected void initialize(HashMap<String, String> params) {
 		// TODO Auto-generated method stub
-		if (params.containsKey("-sigbitlen")) {
-			this.sigBitLength = Integer.valueOf(params.get("-sigbitlen"));
-		} else {
-			this.sigBitLength = 2048;
-		}
+		
+		this.parameterCheck(params);
+		System.out.println("sigbit "+params.get(Constants.ARG_SIG_BIT_LENGTH));
 		ri = new RouteInfo();
-		sigs = new Signatures(this.sigBitLength);
+		sigs = new Signatures(Integer.valueOf(params.get(Constants.ARG_SIG_BIT_LENGTH)));
 		this.verifyAll = false;
 		so = new SignatureOperation(params);
 	}
-
+	protected void parameterCheck(HashMap<String,String> params) {
+		if (!params.containsKey(Constants.ARG_SIG_BIT_LENGTH)) {
+			params.put(Constants.ARG_SIG_BIT_LENGTH, String.valueOf(Constants.DEFAULT_RSA_SIG_BIT_LENGTH));
+		} 
+		if(!params.containsKey(Constants.ARG_KEY_INDEX)) {
+			params.put(Constants.ARG_KEY_INDEX, Constants.DEFAULT_RSA_KEY_INDEX);
+		}
+	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
 		// TODO Auto-generated method stub

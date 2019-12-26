@@ -63,7 +63,7 @@ public class Signatures {
 		this.fromBytes(sigs, pairing);
 	}
 	protected void initializeSignatures(Pairing pairing) {
-		System.out.println("initial signature");
+		System.out.println("initialize signature");
 		sig1 = pairing.getG1().newElement().setToOne();
 		sig2 = pairing.getG1().newElement().setToOne();
 		sig3 = pairing.getG1().newElement().setToOne();
