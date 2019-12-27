@@ -32,22 +32,13 @@ public class Main {
 	}
 
 	public void initialize() {
-		String port = null;
-		String repeat = null;
-		String fragmentation = null;
-		if (params.containsKey("-port")) {
-			port = this.getParameter("-port");
-			Constants.PORT = Integer.valueOf(port);
-		}
-		if (params.containsKey("-repeat")) {
-			repeat = this.getParameter("-repeat");
-			Constants.REPEAT = Integer.valueOf(repeat);
-		}
-
-		if (params.containsKey("-frag")) {
-			fragmentation = this.getParameter("-frag");
-			Constants.FSIZE = Integer.valueOf(fragmentation);
-		}
+		
+		Constants.PORT = Integer.valueOf(this.checkParameters(params, Constants.ARG_PORT_NUM, Constants.DEFAULT_PORT_NUM));
+		Constants.INIT_SEQ = Integer.valueOf(this.checkParameters(params, Constants.ARG_INITIAL_SEQUENCE_NUM, Constants.DEFAULT_INITIAL_SEQUENCE_NUM));
+		Constants.REPEAT= Integer.valueOf(this.checkParameters(params, Constants.ARG_REPEAT, Constants.DEFAULT_REPEAT_TIMES));
+		Constants.FSIZE = Integer.valueOf(this.checkParameters(params, Constants.ARG_FRAGMENTATION_SIZE, Constants.DEFAULT_FRAGMENTATION_SIZE));
+		
+		
 		String protocol = this.getParameter("-protocol");
 		System.out.println("Protocol: " + protocol);
 		rp = this.setRoutingProtocol(protocol);
@@ -56,7 +47,15 @@ public class Main {
 			System.exit(0);
 		}
 	}
-
+	protected String checkParameters(HashMap<String,String> params,String key,String value) {
+		if (!params.containsKey(key)) {
+			params.put(key, value);
+			return value;
+		}
+		else {
+			return params.get(key);
+		}
+	}
 	public RoutingProtocol setRoutingProtocol(String name) {
 		System.out.println("target protocol is " + name);
 		if (name.equalsIgnoreCase("DSR")) {
@@ -90,9 +89,9 @@ public class Main {
 	}
 
 	public void runRepeat() {
-		ExpNode.interval_milisec=2000;
+		ExpNode.interval_milisec=500;
 		ExpNode node = new ExpNode(params);
-		node.setRepeatTimes(Integer.valueOf(params.get("-repeat")));
+		node.setRepeatTimes(Integer.valueOf(params.get("-repeat"))+Constants.INIT_SEQ-1);
 		node.setRoutingProtocol(rp);
 		node.start();
 		if (params.containsKey("-dest")) {

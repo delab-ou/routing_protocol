@@ -7,7 +7,7 @@ from mn_wifi.link import wmediumd, adhoc
 from mn_wifi.cli import CLI_wifi
 from mn_wifi.net import Mininet_wifi
 from mn_wifi.wmediumdConnector import interference
-
+from mn_wifi.wmediumdConnector import error_prob
 
 class TopologyGenerator:
   def __init__(self,width=3,height=3):
@@ -24,6 +24,10 @@ class TopologyGenerator:
         self.y=int(param.split(":")[1]);
       if param.startswith("-p"):
         self.prot=param.split(":")[1];
+      if param.startswith("-m"):
+        self.mode=param.split(":")[1];
+      if param.startswith("-er"):
+        self.error_rate=param.split(":")[1];
 
     print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
 
@@ -47,8 +51,8 @@ class TopologyGenerator:
 
     print("*** Creating links")
     for i in range(num):
-        net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='a', channel=5, ht_cap='HT40+')
-        #net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5)
+        #net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5, ht_cap='HT40+')
+        net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5)
     net.plotGraph(max_x=800, max_y=800)
 
     return net;
@@ -69,6 +73,7 @@ class TopologyGenerator:
     for i in range(1,num):
       print("index:"+str(i)+ " is set cmd: "+self.prot.lower()+".sh");
       #self.stas[i].sendCmd("xterm -e "+self.cmdf);
+      #if i != 10:
       self.stas[i].sendCmd("xterm -hold -e bash "+self.prot.lower()+".sh &");
 
   def setPromisc(self):
@@ -77,7 +82,7 @@ class TopologyGenerator:
     for i in range(num):
       self.stas[i].cmd('ifconfig sta'+str(i+1)+'-wlan0 promisc');
       self.stas[i].cmd('iwconfig sta'+str(i+1)+'-wlan0 rts off');
-      self.stas[i].cmd('iwconfig sta'+str(i+1)+'-wlan0 power off');
+      self.stas[i].cmd('iwconfig sta'+str(i+1)+'-wlan0 retry max 1');
 
   def command_source(self,cmd):
     self.stas[0].cmd('xterm -hold -e '+cmd);
@@ -87,7 +92,7 @@ if __name__ == '__main__':
   args=sys.argv;
 
   if len(args) != 4:
-    print("usage python location.py -w:width -h:height -p:protocol");
+    print("usage python location.py -w:width -h:height -p:protocol ");
   
   
   topo=TopologyGenerator();

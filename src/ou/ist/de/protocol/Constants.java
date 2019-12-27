@@ -12,14 +12,18 @@ public class Constants {
 	public static long timer;
 	public static boolean wait;
 	public static int FSIZE = 1000;
+	public static int REPEAT=1;
+	public static int INIT_SEQ=1;
 	public static int[] network = new int[] { 10, 0, 0 };
-	public static int REPEAT = 1;
 	public static long TIMEOUT = 10000000;
 	
-	public static int DEFAULT_RSA_SIG_BIT_LENGTH=1024;
+	public static String DEFAULT_RSA_SIG_BIT_LENGTH="2048";
 	public static String DEFAULT_RSA_KEY_INDEX="10";
-	public static int DEFAULT_INTERVAL_MILISEC=1000;
-	public static int DEFAULT_REPEAT_TIMES=1;
+	public static String DEFAULT_INTERVAL_MILISEC="1000";
+	public static String DEFAULT_REPEAT_TIMES="1";
+	public static String DEFAULT_INITIAL_SEQUENCE_NUM="1";
+	public static String DEFAULT_PORT_NUM="30000";
+	public static String DEFAULT_FRAGMENTATION_SIZE="1000";
 	
 	public static String ARG_SIG_BIT_LENGTH = "-sigbitlength";
 	public static String ARG_KEY_INDEX="-keyindex";
@@ -32,4 +36,5 @@ public class Constants {
 	public static String ARG_PROTO_SRDP="SRDP";
 	public static String ARG_REPEAT="-repeat";
 	public static String ARG_INTERVAL="-interval";
+	public static String ARG_INITIAL_SEQUENCE_NUM="-seq";
 }

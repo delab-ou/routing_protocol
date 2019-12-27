@@ -35,6 +35,7 @@ public class SignatureOperation {
 		//this.printByteArray(data);
 		try {
 			sig.initSign(kp.getPrivate());
+			//System.err.println("sig="+sig);
 			sig.update(data);
 			return sig.sign();
 		} catch (Exception e) {
@@ -55,8 +56,8 @@ public class SignatureOperation {
 	}
 	public boolean verify(RouteInfo ri, Signatures sigs) {
 		boolean ret = true;
-		//System.out.println("signature length ="+sigs.size());
-		for (int i = 1; ret && (i <= (sigs.size())); i++) {
+		System.out.println("signature length ="+sigs.size());
+		for (int i = 0; ret && (i <ri.size()); i++) {
 			ret &= verify(ri, sigs, i);
 			//System.out.println(i + ":" + ret);
 		}
@@ -64,22 +65,35 @@ public class SignatureOperation {
 	}
 	
 	protected boolean verify(RouteInfo ri, Signatures sigs, int limit) {
-		if (limit <= 0) {
-			return false;
-		}
+		
 		byte[] riBytes=ri.toBytes();
-		//System.out.println("varify data riBytes");
-		//this.printByteArray(riBytes);
+		System.out.println("varify data riBytes");
+		this.printByteArray(riBytes);
 		byte[] sigBytes=sigs.toBytes();
-		int riLength=limit*Constants.InetAddressLength;
-		int sigLength=(limit-1)*sigs.sigLength;
-		//System.out.println("---rilen="+riLength+" siglen="+sigLength);
+		this.printByteArray(sigBytes);
+		
+		
+		
+		
+		System.out.println("ri.size = "+ri.size()+" sigs.size="+sigs.size());
+		System.out.println(ri.toString());
+		System.out.println(sigs.toString());
+		int riLength=(limit+1)*Constants.InetAddressLength;
+		int sigLength=limit*sigs.sigLength;
+		System.err.println("---rilen="+riLength+" siglen="+sigLength+" limit="+limit+" riBytes="+riBytes.length);
 		ByteBuffer bb=ByteBuffer.allocate(riLength+sigLength);
 		bb.put(riBytes,Integer.BYTES,riLength);
-		if(sigLength != 0) {
-			bb.put(sigBytes,0,(limit-1)*sigs.sigLength);
+		System.out.println("verify bb put ribytes "+bb);
+		this.printByteArray(bb.array());
+		if(sigs.get(limit)==null) {
+			System.out.println("sig:"+limit+" is null");
+			return false;
 		}
-		return verify(bb.array(), sigs.get(limit - 1));
+		if(sigLength != 0) {
+			bb.put(sigBytes,0,limit*sigs.sigLength);
+		}
+		System.out.println("sigs ["+limit+"]="+sigs.get(limit));
+		return verify(bb.array(), sigs.get(limit));
 	}
 
 	protected boolean verify(byte[] data, byte[] sign) {
@@ -111,6 +125,16 @@ public class SignatureOperation {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	protected void printByteArray(byte[] ba) {
+		if (ba == null) {
+			System.out.println("[null]");
+		}
+		String s = "[" + ba[0];
+		for (int i = 1; i < ba.length; i++) {
+			s += ("," + ba[i]);
+		}
+		System.out.println(s + "]");
 	}
 
 }

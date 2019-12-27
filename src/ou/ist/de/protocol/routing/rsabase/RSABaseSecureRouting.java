@@ -48,13 +48,15 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		this.ri.addNode(this.node.getAddress());
 		// System.out.println("request in RSA "+p.toString());
 		Packet pkt = this.signingPacket(p);
-		// System.out.println("verify:"+this.verify(p) );
+		//System.out.println("request = "+pkt.toString());
+		//System.out.println("verify:"+this.verifyingPacket(p) );
 		return pkt;
 	}
 
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
+		//System.out.println("received packet = "+p.toString());
 		this.separateOption(p);
 		if (this.ri.isContained(this.node.getAddress())) {
 			return null;
@@ -99,6 +101,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 		}
 
 		if (p.getDest().equals(this.node.getAddress())) {
+			System.err.println("in operate reply packet ri lenght="+ri.byteLength()+" sig length="+sigs.byteLength());
 			System.out.println("reply verification:" + this.verifyingPacket(p));
 			return null;
 		}
@@ -128,6 +131,9 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 
 	public Packet signingPacket(Packet p) {
 		byte[] s = so.sign(this.ri, this.sigs);
+		if(s==null) {
+			System.err.println("in signingPacket signature is null-----------");
+		}
 		sigs.add(s);
 		ByteBuffer bb = ByteBuffer.allocate(this.ri.byteLength() + sigs.byteLength());
 		bb.put(this.ri.toBytes());

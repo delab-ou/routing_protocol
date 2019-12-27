@@ -17,7 +17,7 @@ public abstract class RoutingProtocol {
 	public RoutingProtocol() {
 		node=null;
 		s=null;
-		seqnum=1;
+		seqnum=Constants.INIT_SEQ;
 	}
 	public RoutingProtocol(HashMap<String,String> params) {
 		this();
@@ -64,6 +64,12 @@ public abstract class RoutingProtocol {
 	protected Packet generateForwardingPacket(Packet p) {
 		Long t=null;
 		if(p.getType()==Constants.REQ) {
+			if(p.getSndr().equals(this.node.getAddress())) {
+				return null;
+			}
+			if(p.getSrc().equals(this.node.getAddress())) {
+				return null;
+			}
 			String reqCache=""+p.getType()+p.getSrc().toString()+p.getDest().toString()+p.getSeq();
 			t=new Long(System.currentTimeMillis());
 			if(cache.containsKey(reqCache)) {
@@ -103,7 +109,8 @@ public abstract class RoutingProtocol {
 			//System.out.println("In RoutingProtocol receivedPacket send "+pkt.toString());
 			this.s.send(pkt);
 		}
-		System.out.println(this.node.getAddress().toString().split("\\.")[3]+" processing time is "+(System.currentTimeMillis()-t)+" packet length="+p.getSize());
+		//System.out.println(this.node.getAddress().toString().split("\\.")[3]+" processing time is "+
+		//(System.currentTimeMillis()-t)+" packet type:"+p.getType()+" length="+p.getSize()+" seq:"+p.getSeq());
 	}
 	protected abstract void initialize(HashMap<String,String> params);
 	protected abstract Packet operateRequestPacket(Packet p);
