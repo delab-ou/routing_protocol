@@ -87,7 +87,7 @@ public class ExpNode extends Node {
 		long rtt=0;
 		
 		String csv=this.createTitleRowCSV();
-		for (int i = 1; i <= this.repeat; i++) {
+		for (int i = Constants.INIT_SEQ; i <= (Constants.INIT_SEQ+this.repeat); i++) {
 			pdreq=null;
 			pdrep=null;
 			rtt=0;

@@ -89,9 +89,9 @@ public class Main {
 	}
 
 	public void runRepeat() {
-		ExpNode.interval_milisec=500;
+		ExpNode.interval_milisec=100;
 		ExpNode node = new ExpNode(params);
-		node.setRepeatTimes(Integer.valueOf(params.get("-repeat"))+Constants.INIT_SEQ-1);
+		node.setRepeatTimes(Integer.valueOf(params.get("-repeat")));
 		node.setRoutingProtocol(rp);
 		node.start();
 		if (params.containsKey("-dest")) {

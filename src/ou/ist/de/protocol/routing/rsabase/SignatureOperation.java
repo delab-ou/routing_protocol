@@ -37,7 +37,9 @@ public class SignatureOperation {
 			sig.initSign(kp.getPrivate());
 			//System.err.println("sig="+sig);
 			sig.update(data);
-			return sig.sign();
+			byte[] ret=sig.sign();
+			System.out.println("sign byte[] is "+ret);
+			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -56,7 +58,7 @@ public class SignatureOperation {
 	}
 	public boolean verify(RouteInfo ri, Signatures sigs) {
 		boolean ret = true;
-		System.out.println("signature length ="+sigs.size());
+		System.out.println("in verify ri sigs, signature length ="+sigs.size());
 		for (int i = 0; ret && (i <ri.size()); i++) {
 			ret &= verify(ri, sigs, i);
 			//System.out.println(i + ":" + ret);
@@ -68,23 +70,23 @@ public class SignatureOperation {
 		
 		byte[] riBytes=ri.toBytes();
 		System.out.println("varify data riBytes");
-		this.printByteArray(riBytes);
+		//this.printByteArray(riBytes);
 		byte[] sigBytes=sigs.toBytes();
-		this.printByteArray(sigBytes);
+		//this.printByteArray(sigBytes);
 		
 		
 		
 		
 		System.out.println("ri.size = "+ri.size()+" sigs.size="+sigs.size());
-		System.out.println(ri.toString());
-		System.out.println(sigs.toString());
+		//System.out.println(ri.toString());
+		//System.out.println(sigs.toString());
 		int riLength=(limit+1)*Constants.InetAddressLength;
 		int sigLength=limit*sigs.sigLength;
 		System.err.println("---rilen="+riLength+" siglen="+sigLength+" limit="+limit+" riBytes="+riBytes.length);
 		ByteBuffer bb=ByteBuffer.allocate(riLength+sigLength);
 		bb.put(riBytes,Integer.BYTES,riLength);
 		System.out.println("verify bb put ribytes "+bb);
-		this.printByteArray(bb.array());
+		//this.printByteArray(bb.array());
 		if(sigs.get(limit)==null) {
 			System.out.println("sig:"+limit+" is null");
 			return false;
@@ -98,10 +100,10 @@ public class SignatureOperation {
 
 	protected boolean verify(byte[] data, byte[] sign) {
 		boolean ret = false;
-		//System.out.println("varify data");
-		//this.printByteArray(data);
-		//System.out.println("verify sig");
-		//this.printByteArray(sign);
+		System.out.println("varify data");
+		this.printByteArray(data);
+		System.out.println("verify sig");
+		this.printByteArray(sign);
 		
 		try {
 			sig.initVerify(kp.getPublic());

@@ -9,9 +9,11 @@ public class Signatures {
 
 	protected int sigLength;
 	protected ArrayList<byte[]> sigs;
+	protected int currentSize;
 	
 	public Signatures() {
 		sigs = new ArrayList<byte[]>();
+		currentSize=0;
 	}
 
 	public Signatures(int sigBitLength) {
@@ -24,21 +26,37 @@ public class Signatures {
 		sigs = new ArrayList<byte[]>();
 		this.fromBytes(bs);
 	}
-
+	protected void moveSignature(byte[] sig1, byte[] sig2) {
+		for(int i=0;i<sig1.length;i++) {
+			sig1[i]=sig2[i];
+		}
+	}
+	protected byte[] move(byte[] ba1, byte[] ba2, int offset, int length) {
+		if(ba2.length<(offset+length)) {
+			return null;
+		}
+		for(int i=0;i<length;i++) {
+			ba1[i]=ba2[i+offset];
+		}
+		return ba1;
+		
+	}
 	protected void fromOption(byte[] opt) {
 		sigs.clear();
 		ByteBuffer bb = ByteBuffer.wrap(opt);
 		int num = bb.getInt();
 		bb.position(Integer.BYTES + num * Constants.InetAddressLength);
+		
 		byte[] sig = null;
 		int count=0;
 		while (bb.limit() > bb.position()) {
 			// System.out.println("limit="+bb.limit()+" pos="+bb.position()+"
 			// siglength="+this.sigLength);
 			count++;
-			System.out.print(" cnt="+count);
+			//System.out.print(" cnt="+count);
 			sig = new byte[sigLength];
 			bb.get(sig);
+			
 			sigs.add(sig);
 		}
 	}
@@ -106,9 +124,11 @@ public class Signatures {
 
 	public int size() {
 		return this.sigs.size();
+		//return this.currentSize;
 	}
 
 	public void clear() {
 		this.sigs.clear();
+		//this.currentSize=0;
 	}
 }

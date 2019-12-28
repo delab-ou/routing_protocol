@@ -130,8 +130,9 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 	}
 
 	public Packet signingPacket(Packet p) {
-		byte[] s = so.sign(this.ri, this.sigs);
-		if(s==null) {
+		byte[] s =null;
+		while(s==null) {
+			s = so.sign(this.ri, this.sigs);
 			System.err.println("in signingPacket signature is null-----------");
 		}
 		sigs.add(s);
