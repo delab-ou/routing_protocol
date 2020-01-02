@@ -38,7 +38,8 @@ public class SignatureOperation {
 			//System.err.println("sig="+sig);
 			sig.update(data);
 			byte[] ret=sig.sign();
-			System.out.println("sign byte[] is "+ret);
+			System.out.println("sig = "+ret.length);
+			//System.out.println("sign byte[] is "+ret);
 			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,7 +70,7 @@ public class SignatureOperation {
 	protected boolean verify(RouteInfo ri, Signatures sigs, int limit) {
 		
 		byte[] riBytes=ri.toBytes();
-		System.out.println("varify data riBytes");
+		//System.out.println("varify data riBytes");
 		//this.printByteArray(riBytes);
 		byte[] sigBytes=sigs.toBytes();
 		//this.printByteArray(sigBytes);
@@ -77,33 +78,33 @@ public class SignatureOperation {
 		
 		
 		
-		System.out.println("ri.size = "+ri.size()+" sigs.size="+sigs.size());
+		//System.out.println("ri.size = "+ri.size()+" sigs.size="+sigs.size());
 		//System.out.println(ri.toString());
 		//System.out.println(sigs.toString());
 		int riLength=(limit+1)*Constants.InetAddressLength;
 		int sigLength=limit*sigs.sigLength;
-		System.err.println("---rilen="+riLength+" siglen="+sigLength+" limit="+limit+" riBytes="+riBytes.length);
+		//System.err.println("---rilen="+riLength+" siglen="+sigLength+" limit="+limit+" riBytes="+riBytes.length);
 		ByteBuffer bb=ByteBuffer.allocate(riLength+sigLength);
 		bb.put(riBytes,Integer.BYTES,riLength);
-		System.out.println("verify bb put ribytes "+bb);
+		//System.out.println("verify bb put ribytes "+bb);
 		//this.printByteArray(bb.array());
 		if(sigs.get(limit)==null) {
-			System.out.println("sig:"+limit+" is null");
+			//System.out.println("sig:"+limit+" is null");
 			return false;
 		}
 		if(sigLength != 0) {
 			bb.put(sigBytes,0,limit*sigs.sigLength);
 		}
-		System.out.println("sigs ["+limit+"]="+sigs.get(limit));
+		//System.out.println("sigs ["+limit+"]="+sigs.get(limit));
 		return verify(bb.array(), sigs.get(limit));
 	}
 
 	protected boolean verify(byte[] data, byte[] sign) {
 		boolean ret = false;
-		System.out.println("varify data");
-		this.printByteArray(data);
-		System.out.println("verify sig");
-		this.printByteArray(sign);
+		//System.out.println("varify data");
+		//this.printByteArray(data);
+		//System.out.println("verify sig");
+		//this.printByteArray(sign);
 		
 		try {
 			sig.initVerify(kp.getPublic());
@@ -117,7 +118,7 @@ public class SignatureOperation {
 	protected void setKeys(String keyFile, String strindex, String strkeysize) {
 		try {
 			int index = Integer.valueOf(strindex);
-			System.out.println("key size=" + strkeysize);
+			//System.out.println("key size=" + strkeysize);
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(keyFile));
 			KeyPair[] kparray = ((KeyPair[]) ois.readObject());
 			ois.close();

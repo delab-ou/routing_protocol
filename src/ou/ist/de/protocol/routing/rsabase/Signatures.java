@@ -96,6 +96,7 @@ public class Signatures {
 		if (this.sigs.size() == 0) {
 			return null;
 		}
+		//System.err.println("siglength = "+this.sigLength);
 		
 		ByteBuffer bb = ByteBuffer.allocate(this.byteLength());
 		while(bb.limit()!=this.byteLength()) {
@@ -104,6 +105,8 @@ public class Signatures {
 		try {
 			//System.err.println("in Signatures toBytes bytelength=" + this.byteLength() + " bb=" + bb + " sigs=" + sigs);
 			for (int i = 0; i < sigs.size(); i++) {
+				byte[] b=this.sigs.get(i);
+				//System.out.println("sigs["+i+"]="+b.length);
 				bb.put(this.sigs.get(i));
 			}
 		} catch (Exception e) {

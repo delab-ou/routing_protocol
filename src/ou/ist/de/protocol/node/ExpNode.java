@@ -16,6 +16,7 @@ public class ExpNode extends Node {
 	protected int repeat;
 	protected HashMap<String, ArrayList<PacketData>> alpd;
 	protected InetAddress dest;
+	protected long start;
 
 	public ExpNode(HashMap<String, String> params) {
 		super(params);
@@ -39,6 +40,7 @@ public class ExpNode extends Node {
 			}
 			al = alpd.get(key);
 			al.add(new PacketData(p.getType(), p.getSeq(), System.currentTimeMillis(), p.getHops(),0));
+			this.start=System.currentTimeMillis();
 			System.out.println(
 					"sent to " + p.getDest().toString() + " from " + p.getSrc().toString() + " seq=" + p.getSeq());
 			try {
@@ -54,7 +56,10 @@ public class ExpNode extends Node {
 		System.out.println("---------- route is established "+p.getHops()+" hops seq:"+p.getSeq()+"----------");
 		String key = "src:" + p.getDest().toString() + ";dest:" + p.getSrc().toString() + ";seq:" + p.getSeq();
 		System.out.println(key);
+		System.out.println("rtt="+(System.currentTimeMillis()-start));
 		if (alpd.containsKey(key)) {
+			PacketData pd=alpd.get(key).get(0);
+			System.out.println("rtt="+(System.currentTimeMillis()-pd.time));
 			alpd.get(key).add(new PacketData(p.getType(), p.getSeq(), System.currentTimeMillis(), p.getHops(),alpd.get(key).size()));
 		}
 	}
@@ -86,14 +91,17 @@ public class ExpNode extends Node {
 		PacketData pdrep=null;
 		long rtt=0;
 		
+		for(String s:alpd.keySet()) {
+			System.out.println("key="+s);
+		}
 		String csv=this.createTitleRowCSV();
-		for (int i = Constants.INIT_SEQ; i <= (Constants.INIT_SEQ+this.repeat); i++) {
+		for (int i = Constants.INIT_SEQ; i < (Constants.INIT_SEQ+this.repeat); i++) {
+			System.out.println("i="+i);
 			pdreq=null;
 			pdrep=null;
 			rtt=0;
 			key = "src:" + this.addr.toString() + ";dest:" + this.dest.toString() + ";seq:" + i;
 			al=this.alpd.get(key);
-			//System.out.println("seq:"+i+" array size="+al.size());
 			if(al.size()==1) {
 				//System.out.println("no route established");
 				continue;
@@ -101,7 +109,7 @@ public class ExpNode extends Node {
 			received++;
 			pdreq=this.findReq(al);
 			if(pdreq==null) {
-				System.out.println("no request seq:"+i);
+				//System.out.println("no request seq:"+i);
 				System.exit(1);
 			}
 			for(int j=0;j<al.size();j++) {

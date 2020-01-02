@@ -89,15 +89,16 @@ public class Main {
 	}
 
 	public void runRepeat() {
-		ExpNode.interval_milisec=100;
+		ExpNode.interval_milisec=1000;
 		ExpNode node = new ExpNode(params);
 		node.setRepeatTimes(Integer.valueOf(params.get("-repeat")));
 		node.setRoutingProtocol(rp);
 		node.start();
+		
 		if (params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-				Thread.sleep(120000);
+				Thread.sleep(30000);
 				node.writeResults();
 			} catch (Exception e) {
 				e.printStackTrace();
