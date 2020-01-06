@@ -37,7 +37,7 @@ public class ISDSR extends RoutingProtocol {
 		this.ri.addNode(this.node.getAddress());
 		sigs.fromBytes(null, so.pairing);
 		Packet pkt=signingPacket(p);
-		System.out.println("verify:"+this.verifyingPacket(pkt));
+		//System.out.println("verify:"+this.verifyingPacket(pkt));
 		return pkt;
 	}
 

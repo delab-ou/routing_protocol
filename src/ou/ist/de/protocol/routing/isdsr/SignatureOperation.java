@@ -31,8 +31,8 @@ public class SignatureOperation {
 		
 	}
 	public SignatureOperation(HashMap<String,String> params, String uid) {
-		String keyfile="a1.keys";
-		String paramFile="a1.properties";
+		String keyfile="a.keys";
+		String paramFile="a.properties";
 		if(params.containsKey("-keyfile")) {
 			keyfile=params.get("-keyfile");
 		}

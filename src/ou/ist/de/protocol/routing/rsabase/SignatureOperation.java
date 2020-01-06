@@ -38,7 +38,7 @@ public class SignatureOperation {
 			//System.err.println("sig="+sig);
 			sig.update(data);
 			byte[] ret=sig.sign();
-			System.out.println("sig = "+ret.length);
+			//System.out.println("sig = "+ret.length);
 			//System.out.println("sign byte[] is "+ret);
 			return ret;
 		} catch (Exception e) {

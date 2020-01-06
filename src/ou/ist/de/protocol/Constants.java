@@ -17,7 +17,7 @@ public class Constants {
 	public static int[] network = new int[] { 10, 0, 0 };
 	public static long TIMEOUT = 10000000;
 	
-	public static String DEFAULT_RSA_SIG_BIT_LENGTH="4096";
+	public static String DEFAULT_RSA_SIG_BIT_LENGTH="1024";
 	public static String DEFAULT_RSA_KEY_INDEX="10";
 	public static String DEFAULT_INTERVAL_MILISEC="1000";
 	public static String DEFAULT_REPEAT_TIMES="1";

@@ -14,6 +14,9 @@ public abstract class RoutingProtocol {
 	protected Sender s;
 	protected int seqnum;
 	protected HashMap<String,Long> cache;
+	protected byte[] received;
+	protected int rcv;
+	
 	public RoutingProtocol() {
 		node=null;
 		s=null;
@@ -22,6 +25,8 @@ public abstract class RoutingProtocol {
 	public RoutingProtocol(HashMap<String,String> params) {
 		this();
 		cache=new HashMap<String,Long>();
+		received=new byte[10000];
+		rcv=0;
 		this.initialize(params);
 	}
 	
@@ -58,6 +63,11 @@ public abstract class RoutingProtocol {
 		p.setDest(p.getSrc());
 		p.setSrc(this.node.getAddress());
 		p.setSndr(this.node.getAddress());
+		if(received[p.getSeq()]==0) {
+			received[p.getSeq()]=1;
+			rcv++;
+			System.out.println("rcv="+rcv+" seq="+p.getSeq());
+		}
 		return operateReplyPacket(p);
 		
 	}
@@ -96,6 +106,7 @@ public abstract class RoutingProtocol {
 		//System.out.println("receive from "+p.getSndr()+" seq:"+p.getSeq()+" hops:"+p.getHops()+" type:"+p.getType());
 		if (p.getDest().equals(this.node.getAddress())) {
 			if (p.getType() == Constants.REQ) {
+				
 				pkt = this.generateInitialReply(p);
 			}
 			else {

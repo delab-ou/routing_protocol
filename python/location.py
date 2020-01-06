@@ -34,6 +34,7 @@ class TopologyGenerator:
   def generate(self):
     net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=1)
     #net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference)
+    #net = Mininet_wifi(link=wmediumd)
     num=self.x*self.y;
     
     info("*** Creating nodes\n")
@@ -41,10 +42,10 @@ class TopologyGenerator:
 
     print("*** Creating nodes")
     for i in range(num):
-        self.stas.append(net.addStation('sta' + str(i+1), position=str(i%self.x*80)+','+str(i/self.x*80)+',0', range=100))
+        self.stas.append(net.addStation('sta' + str(i+1), position=str(i%self.x*90)+','+str(i/self.x*90)+',0', range=100))
 
     info("*** Configuring Propagation Model\n")
-    net.setPropagationModel(model="logDistance", exp=4)
+    net.setPropagationModel(model="logDistance", exp=4.5)
 
     print("*** Configuring wifi nodes")
     net.configureWifiNodes()
