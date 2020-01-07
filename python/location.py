@@ -32,7 +32,7 @@ class TopologyGenerator:
     print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
 
   def generate(self):
-    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=1)
+    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=2)
     #net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference)
     #net = Mininet_wifi(link=wmediumd)
     num=self.x*self.y;
