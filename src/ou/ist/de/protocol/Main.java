@@ -98,7 +98,7 @@ public class Main {
 		if (params.containsKey("-dest")) {
 			try {
 				node.startRouteEstablishment(InetAddress.getByName(params.get("-dest")));
-				Thread.sleep(600000);
+				Thread.sleep(1200000);
 				node.writeResults();
 			} catch (Exception e) {
 				e.printStackTrace();
