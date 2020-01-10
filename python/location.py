@@ -32,7 +32,7 @@ class TopologyGenerator:
     print("w:"+str(self.x)+" h:"+str(self.y)+" p:"+self.prot);
 
   def generate(self):
-    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=2)
+    net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference,noise_threshold=-91, fading_coefficient=1)
     #net = Mininet_wifi(link=wmediumd, wmediumd_mode=interference)
     #net = Mininet_wifi(link=wmediumd)
     num=self.x*self.y;
@@ -54,7 +54,7 @@ class TopologyGenerator:
     for i in range(num):
         #net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5, ht_cap='HT40+')
         net.addLink(self.stas[i], cls=adhoc, intf='sta'+str(i+1)+'-wlan0',ssid='adhocNet',mode='g', channel=5)
-    net.plotGraph(max_x=800, max_y=800)
+    net.plotGraph(max_x=5000, max_y=1000)
 
     return net;
 
