@@ -1,5 +1,6 @@
 package ou.ist.de.protocol.routing.srdp;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -8,10 +9,9 @@ import ou.ist.de.protocol.Constants;
 public class Signatures {
 
 	protected int sigLength;
-	protected ArrayList<byte[]> sigs;
+	protected BigInteger sig;
 
 	public Signatures() {
-		sigs = new ArrayList<byte[]>();
 	}
 	public Signatures(int sigBitLength) {
 		this.sigLength = sigBitLength / 8;

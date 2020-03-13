@@ -12,7 +12,8 @@ public class SRDP extends RoutingProtocol {
 	
 	protected HashMap<String,ArrayList<String>> rcvCache;
 	protected RouteInfo ri;
-	protected Signatures sigs;
+	protected Signature sig;
+	protected PublicKeyPairs pkp;
 	protected boolean verifyAll;
 	protected SignatureOperation so;
 	
@@ -28,7 +29,8 @@ public class SRDP extends RoutingProtocol {
 		this.parameterCheck(params);
 		System.out.println("sigbit "+params.get(Constants.ARG_SIG_BIT_LENGTH));
 		ri = new RouteInfo();
-		sigs = new Signatures(Integer.valueOf(params.get(Constants.ARG_SIG_BIT_LENGTH)));
+		sig=new Signature(Integer.valueOf(params.get(Constants.ARG_SIG_BIT_LENGTH)));
+		pkp=new PublicKeyPairs();
 		this.verifyAll = false;
 		so = new SignatureOperation(params);
 		rcvCache=new HashMap<String,ArrayList<String>>();
@@ -44,7 +46,6 @@ public class SRDP extends RoutingProtocol {
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
 		// TODO Auto-generated method stub
-		this.sigs.clear();
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
 		// System.out.println("request in RSA "+p.toString());
@@ -57,7 +58,6 @@ public class SRDP extends RoutingProtocol {
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
-		this.sigs.clear();
 		this.ri.clear();
 		ri.fromBytes(p.getOption());
 		ri.addNode(this.node.getAddress());
@@ -112,27 +112,31 @@ public class SRDP extends RoutingProtocol {
 	
 	protected void separateOption(Packet p) {
 		ri.clear();
-		sigs.clear();
+		pkp.clear();
 		if (p.getOption() == null) {
 			return;
 		}
 		ri.fromBytes(p.getOption());
-		sigs.fromOption(p.getOption());
+		sig.fromBytes(p.getOption());
+		pkp.fromBytes(p.getOption());
 
 	}
 
 	public Packet signingPacket(Packet p) {
-		byte[] s = so.sign(this.ri, this.sigs);
-		sigs.add(s);
-		ByteBuffer bb = ByteBuffer.allocate(this.ri.byteLength() + sigs.byteLength());
-		bb.put(this.ri.toBytes());
-		bb.put(this.sigs.toBytes());
+		Signature s= so.sign(this.ri, this.sig, this.pkp);
+		byte[] ribytes=ri.toBytes();
+		byte[] sigbytes=s.toBytes();
+		byte[] pkpbytes=pkp.toBytes();
+		ByteBuffer bb = ByteBuffer.allocate(ribytes.length+sigbytes.length+pkpbytes.length);
+		bb.put(ribytes);
+		bb.put(sigbytes);
+		bb.put(pkpbytes);
 		p.setOption(bb.array());
 		return p;
 	}
 
 	public boolean verifyingPacket(Packet p) {
-		return so.verify(this.ri, this.sigs);
+		return so.verify(this.ri, this.sig,this.pkp);
 	}
 	protected boolean checkReqCache(Packet p) {
 		

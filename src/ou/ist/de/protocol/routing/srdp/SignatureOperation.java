@@ -2,95 +2,124 @@ package ou.ist.de.protocol.routing.srdp;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.KeyPair;
-import java.security.Signature;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.util.HashMap;
+import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.RSAPrivateKey;
 
 import ou.ist.de.protocol.Constants;
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
 import ou.ist.de.protocol.routing.srdp.Signatures;
 
 public class SignatureOperation {
-	
-	protected KeyPair kp;
-	protected Signature sig;
-	
+
+	protected BigInteger secExp;
+	protected BigInteger pubExp;
+	protected BigInteger modulus;
 	public SignatureOperation() {
-		
+
 	}
-	public SignatureOperation(HashMap<String,String> params) {
-		String sigBitLength=params.get(Constants.ARG_SIG_BIT_LENGTH);
-		String index=params.get(Constants.ARG_KEY_INDEX);
-		String keyFile="rsa"+sigBitLength+"_100keys.properties";
-		this.setKeys(keyFile, index, sigBitLength);
-	}
-	
-	public byte[] sign(RouteInfo ri, Signatures sigs) {
-		return this.sign(this.generateTargetData(ri, sigs));
-	}
-	
-	protected byte[] sign(byte[] data) {
-		//System.out.println("sign data");
-		//this.printByteArray(data);
+
+	public SignatureOperation(HashMap<String, String> params) {
+		String sigBitLength = params.get(Constants.ARG_SIG_BIT_LENGTH);
 		try {
-			sig.initSign(kp.getPrivate());
-			sig.update(data);
-			return sig.sign();
+			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+			gen.initialize(Integer.valueOf(sigBitLength));
+			KeyPair kp=gen.generateKeyPair();
+			pubExp = ((RSAPublicKey) kp.getPublic()).getPublicExponent();
+			secExp = ((RSAPrivateKey) kp.getPrivate()).getPrivateExponent();
+			modulus = ((RSAPublicKey) kp.getPublic()).getModulus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+
 	}
-	protected byte[] generateTargetData(RouteInfo ri, Signatures ss) {
-		byte[] riBytes = ri.toBytes();
-		byte[] sigBytes = ss.toBytes();
-		ByteBuffer bb = ByteBuffer.allocate(riBytes.length - Integer.BYTES + ((sigBytes == null) ? 0 : sigBytes.length));
-		bb.put(riBytes,Integer.BYTES,(riBytes.length-Integer.BYTES));
-		if (sigBytes != null) {
-			bb.put(sigBytes);
+	public PublicKeyPair getPublicKeyPair() {
+		PublicKeyPair pk=new PublicKeyPair();
+		pk.modulus=this.modulus;
+		pk.pubExp=this.pubExp;
+		
+		return pk;
+	}
+	public Signature sign(RouteInfo ri, Signature signature, PublicKeyPairs pkp) {
+		byte[] data=this.generateTargetData(ri);
+		BigInteger hash = new BigInteger(this.hashCalc(data));
+		System.out.println("hash=" + hash);
+		boolean b = false;
+		if (signature != null) {
+			
+			if (signature.sig.compareTo(this.modulus) > 0) {// -1 pre < modulus, 0 pre==modulus, 1 pre>modulus
+				signature.sig = signature.sig.subtract(this.modulus);
+				System.out.println("modulus=" + this.modulus);
+				b = true;
+			}
+			hash = hash.add(signature.sig);
 		}
+		hash = hash.mod(this.modulus).modPow(this.secExp, this.modulus);
+		System.out.println("sig=" + hash);
+		return new Signature(hash);
+	}
+	protected byte[] generateTargetData(RouteInfo ri) {
+		byte[] riBytes = ri.toBytes();
+		ByteBuffer bb = ByteBuffer
+				.allocate(riBytes.length - Integer.BYTES);
+		bb.put(riBytes, Integer.BYTES, (riBytes.length - Integer.BYTES));
+		
 		return bb.array();
 
 	}
-	public boolean verify(RouteInfo ri, Signatures sigs) {
+
+	public boolean verify(RouteInfo ri, Signatures sig, PublicKeyPairs pkp) {
 		boolean ret = true;
-		//System.out.println("signature length ="+sigs.size());
-		for (int i = 1; ret && (i <= (sigs.size())); i++) {
-			ret &= verify(ri, sigs, i);
-			System.out.println(i + ":" + ret);
+		// System.out.println("signature length ="+sigs.size());
+		
+		byte[] data=this.generateTargetData(ri);
+		BigInteger tmp=sig.sig;
+		for(int i=pkp.size();i>=0;i--) {
+			PublicKeyPair pk=pkp.get(i);
+			BigInteger h=new BigInteger(this.hashCalc(data, pk.modulus.toByteArray(), pk.pubExp.toByteArray()));
+			tmp=tmp.modPow(pk.pubExp, pk.modulus);
+			tmp=tmp.subtract(pk.modulus);
+			if(pk.isFlag()) {
+				tmp=tmp.add(pk.modulus);
+			}
 		}
 		return ret;
 	}
-	
-	protected boolean verify(RouteInfo ri, Signatures sigs, int limit) {
-		
+
+	protected boolean verify(RouteInfo ri, Signatures sigs, PublicKeyPairs pkp, int limit) {
+
 		//
 		if (limit <= 0) {
 			return false;
 		}
-		byte[] riBytes=ri.toBytes();
-		//System.out.println("varify data riBytes");
-		//this.printByteArray(riBytes);
-		byte[] sigBytes=sigs.toBytes();
-		int riLength=ri.size()*Constants.InetAddressLength;
-		int sigLength=(limit-1)*sigs.sigLength;
-		//System.out.println("---rilen="+riLength+" siglen="+sigLength);
-		ByteBuffer bb=ByteBuffer.allocate(riLength+sigLength);
-		bb.put(riBytes,Integer.BYTES,riLength);
-		if(sigLength != 0) {
-			bb.put(sigBytes,0,(limit-1)*sigs.sigLength);
+		byte[] riBytes = ri.toBytes();
+		// System.out.println("varify data riBytes");
+		// this.printByteArray(riBytes);
+		byte[] sigBytes = sigs.toBytes();
+		int riLength = ri.size() * Constants.InetAddressLength;
+		int sigLength = (limit - 1) * sigs.sigLength;
+		// System.out.println("---rilen="+riLength+" siglen="+sigLength);
+		ByteBuffer bb = ByteBuffer.allocate(riLength + sigLength);
+		bb.put(riBytes, Integer.BYTES, riLength);
+		if (sigLength != 0) {
+			bb.put(sigBytes, 0, (limit - 1) * sigs.sigLength);
 		}
 		return verify(bb.array(), sigs.get(limit - 1));
 	}
 
+	
 	protected boolean verify(byte[] data, byte[] sign) {
 		boolean ret = false;
-		//System.out.println("varify data");
-		//this.printByteArray(data);
-		//System.out.println("verify sig");
-		//this.printByteArray(sign);
-		
+		// System.out.println("varify data");
+		// this.printByteArray(data);
+		// System.out.println("verify sig");
+		// this.printByteArray(sign);
+
 		try {
 			sig.initVerify(kp.getPublic());
 			sig.update(data);
@@ -100,19 +129,31 @@ public class SignatureOperation {
 		}
 		return ret;
 	}
-	protected void setKeys(String keyFile, String strindex, String strkeysize) {
+	
+	public byte[] hashCalc(byte[] data) {
+		return this.hashCalc(data, this.modulus.toByteArray(), this.pubExp.toByteArray());
+	}
+	public byte[] hashCalc(byte[] data, byte[] modulus, byte[] pubExp) {
+		ByteBuffer bb = ByteBuffer.allocate(data.length + modulus.length + pubExp.length);
+		bb.put(data);
+		bb.put(modulus);
+		bb.put(pubExp);
+
+		byte[] ret = null;
 		try {
-			int index = Integer.valueOf(strindex);
-			//System.out.println("key size=" + strkeysize);
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(keyFile));
-			KeyPair[] kparray = ((KeyPair[]) ois.readObject());
-			ois.close();
-			kp = kparray[index];
-			sig = Signature.getInstance("MD5WithRSA");
+			MessageDigest sha = MessageDigest.getInstance("MD5");
+			sha.update(bb.array());
 			
+			BigInteger tmp=new BigInteger(sha.digest());
+			if(tmp.compareTo(BigInteger.ZERO)<0) {
+				tmp=tmp.negate();
+			}
+			ret = tmp.toByteArray();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
 
+		return ret;
+
+	}
 }
