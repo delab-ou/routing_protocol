@@ -1,7 +1,5 @@
 package ou.ist.de.protocol.routing.srdp;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.KeyPair;
@@ -13,7 +11,6 @@ import java.security.interfaces.RSAPrivateKey;
 
 import ou.ist.de.protocol.Constants;
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
-import ou.ist.de.protocol.routing.srdp.Signatures;
 
 public class SignatureOperation {
 
@@ -73,7 +70,7 @@ public class SignatureOperation {
 
 	}
 
-	public boolean verify(RouteInfo ri, Signatures sig, PublicKeyPairs pkp) {
+	public boolean verify(RouteInfo ri, Signature sig, PublicKeyPairs pkp) {
 		boolean ret = true;
 		// System.out.println("signature length ="+sigs.size());
 		
@@ -88,47 +85,12 @@ public class SignatureOperation {
 				tmp=tmp.add(pk.modulus);
 			}
 		}
+		ret=(tmp.compareTo(BigInteger.ZERO)==0);
 		return ret;
 	}
 
-	protected boolean verify(RouteInfo ri, Signatures sigs, PublicKeyPairs pkp, int limit) {
-
-		//
-		if (limit <= 0) {
-			return false;
-		}
-		byte[] riBytes = ri.toBytes();
-		// System.out.println("varify data riBytes");
-		// this.printByteArray(riBytes);
-		byte[] sigBytes = sigs.toBytes();
-		int riLength = ri.size() * Constants.InetAddressLength;
-		int sigLength = (limit - 1) * sigs.sigLength;
-		// System.out.println("---rilen="+riLength+" siglen="+sigLength);
-		ByteBuffer bb = ByteBuffer.allocate(riLength + sigLength);
-		bb.put(riBytes, Integer.BYTES, riLength);
-		if (sigLength != 0) {
-			bb.put(sigBytes, 0, (limit - 1) * sigs.sigLength);
-		}
-		return verify(bb.array(), sigs.get(limit - 1));
-	}
 
 	
-	protected boolean verify(byte[] data, byte[] sign) {
-		boolean ret = false;
-		// System.out.println("varify data");
-		// this.printByteArray(data);
-		// System.out.println("verify sig");
-		// this.printByteArray(sign);
-
-		try {
-			sig.initVerify(kp.getPublic());
-			sig.update(data);
-			ret = sig.verify(sign);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ret;
-	}
 	
 	public byte[] hashCalc(byte[] data) {
 		return this.hashCalc(data, this.modulus.toByteArray(), this.pubExp.toByteArray());
