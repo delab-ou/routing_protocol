@@ -59,9 +59,13 @@ public class SRDP extends RoutingProtocol {
 	protected Packet operateReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
 		this.ri.clear();
+		this.pkp.clear();
 		ri.fromBytes(p.getOption());
 		ri.addNode(this.node.getAddress());
+		//System.out.println(ri.toString());
 		p.setNext(ri.get(ri.size() - 2));
+		pkp.add(so.getPublicKeyPair());
+		System.out.println("public key pair="+so.getPublicKeyPair());
 		return this.signingPacket(p);
 	}
 
@@ -83,14 +87,21 @@ public class SRDP extends RoutingProtocol {
 	protected Packet operateReplyForwardingPacket(Packet p) {
 		// TODO Auto-generated method stub
 		//System.out.println("in srdp op reply "+p.toString());
+		
 		this.separateOption(p);
+		boolean v=this.verifyingPacket(p);
 		if (!this.ri.isContained(this.node.getAddress())) {
 			//System.out.println(" not contained");
 			return null;
 		}
 
 		if (p.getDest().equals(this.node.getAddress())) {
-			//System.out.println("reply verification:" + this.verifyingPacket(p));
+			
+			if(!v) {
+				
+			}
+			System.out.println("reply verification:" + v);
+			
 			//System.out.println(p.toString());
 			return null;
 		}
@@ -104,6 +115,14 @@ public class SRDP extends RoutingProtocol {
 				break;
 			}
 		}
+		
+		/*
+		if(!v) {
+			System.out.println("----- forwarding false -----");
+			return null;
+		}
+		*/
+		pkp.add(so.getPublicKeyPair());
 		p.setSndr(this.node.getAddress());
 		p.setHops(p.getHops() + 1);
 		
@@ -117,8 +136,11 @@ public class SRDP extends RoutingProtocol {
 			return;
 		}
 		ri.fromBytes(p.getOption());
+		if(p.getType()==Constants.REP) {
+			System.out.println("received packet is REP");
 		sig.fromBytes(p.getOption());
 		pkp.fromBytes(p.getOption());
+		}
 
 	}
 
@@ -129,9 +151,13 @@ public class SRDP extends RoutingProtocol {
 		byte[] pkpbytes=pkp.toBytes();
 		ByteBuffer bb = ByteBuffer.allocate(ribytes.length+sigbytes.length+pkpbytes.length);
 		bb.put(ribytes);
+		System.out.println("ri length="+ribytes.length);
 		bb.put(sigbytes);
+		System.out.println("sig length="+sigbytes.length);
 		bb.put(pkpbytes);
+		System.out.println("pkp length="+pkpbytes.length);
 		p.setOption(bb.array());
+		System.out.println("set option length="+bb.capacity());
 		return p;
 	}
 

@@ -65,4 +65,8 @@ public class PublicKeyPair {
 	public int totalSize() {
 		return 1+this.pubExp.toByteArray().length + this.modulus.toByteArray().length + Integer.BYTES * 2;
 	}
+	
+	public String toString() {
+		return "pubExp="+this.pubExp+"\n"+"modulus="+this.modulus+"\n"+"flag="+this.flag;
+	}
 }

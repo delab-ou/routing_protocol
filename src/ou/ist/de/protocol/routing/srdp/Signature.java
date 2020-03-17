@@ -24,7 +24,7 @@ public class Signature {
 		this.sig=sig;
 	}
 	public int byteLength() {
-		return sig.toByteArray().length+1;
+		return sig.toByteArray().length;
 	}
 	public int fromBytes(byte[] b) {
 		ByteBuffer bb=ByteBuffer.wrap(b);
@@ -37,7 +37,7 @@ public class Signature {
 		return bb.position();
 	}
 	public byte[] toBytes() {
-		ByteBuffer bb=ByteBuffer.allocate(Integer.BYTES+sig.toByteArray().length+1);
+		ByteBuffer bb=ByteBuffer.allocate(Integer.BYTES+sig.toByteArray().length);
 		bb.putInt(sig.toByteArray().length);
 		bb.put(sig.toByteArray());
 		return bb.array();

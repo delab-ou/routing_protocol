@@ -17,6 +17,7 @@ public class SignatureOperation {
 	protected BigInteger secExp;
 	protected BigInteger pubExp;
 	protected BigInteger modulus;
+	protected PublicKeyPair pk;
 	public SignatureOperation() {
 
 	}
@@ -30,34 +31,35 @@ public class SignatureOperation {
 			pubExp = ((RSAPublicKey) kp.getPublic()).getPublicExponent();
 			secExp = ((RSAPrivateKey) kp.getPrivate()).getPrivateExponent();
 			modulus = ((RSAPublicKey) kp.getPublic()).getModulus();
+			pk=new PublicKeyPair();
+			pk.pubExp=pubExp;
+			pk.modulus=modulus;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 	public PublicKeyPair getPublicKeyPair() {
-		PublicKeyPair pk=new PublicKeyPair();
-		pk.modulus=this.modulus;
-		pk.pubExp=this.pubExp;
-		
 		return pk;
 	}
 	public Signature sign(RouteInfo ri, Signature signature, PublicKeyPairs pkp) {
 		byte[] data=this.generateTargetData(ri);
 		BigInteger hash = new BigInteger(this.hashCalc(data));
-		System.out.println("hash=" + hash);
+		//System.out.println("hash=" + hash);
 		boolean b = false;
-		if (signature != null) {
+		if (signature.sig != null) {
 			
 			if (signature.sig.compareTo(this.modulus) > 0) {// -1 pre < modulus, 0 pre==modulus, 1 pre>modulus
 				signature.sig = signature.sig.subtract(this.modulus);
-				System.out.println("modulus=" + this.modulus);
+				//System.out.println("modulus=" + this.modulus);
 				b = true;
+				System.out.println("sig is larger than modulus");
+				this.pk.flag=1;
 			}
 			hash = hash.add(signature.sig);
 		}
 		hash = hash.mod(this.modulus).modPow(this.secExp, this.modulus);
-		System.out.println("sig=" + hash);
+		//System.out.println("sig=" + hash);
 		return new Signature(hash);
 	}
 	protected byte[] generateTargetData(RouteInfo ri) {
@@ -75,15 +77,22 @@ public class SignatureOperation {
 		// System.out.println("signature length ="+sigs.size());
 		
 		byte[] data=this.generateTargetData(ri);
+		System.out.println("route "+ri);
 		BigInteger tmp=sig.sig;
-		for(int i=pkp.size();i>=0;i--) {
+		//System.out.println("ri length="+ri.size()+" pkp length="+pkp.size());
+		//System.out.println("pkp = "+pkp);
+		//System.out.println("pkp size="+pkp.size());
+		for(int i=pkp.size()-1;i>=0;i--) {
 			PublicKeyPair pk=pkp.get(i);
+			//System.out.println("pk="+pk);
 			BigInteger h=new BigInteger(this.hashCalc(data, pk.modulus.toByteArray(), pk.pubExp.toByteArray()));
 			tmp=tmp.modPow(pk.pubExp, pk.modulus);
-			tmp=tmp.subtract(pk.modulus);
+			tmp=tmp.subtract(h.mod(pk.modulus));
 			if(pk.isFlag()) {
 				tmp=tmp.add(pk.modulus);
+				System.out.println("flag is on");
 			}
+			//System.out.println("tmp="+tmp);
 		}
 		ret=(tmp.compareTo(BigInteger.ZERO)==0);
 		return ret;

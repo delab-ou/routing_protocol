@@ -44,12 +44,17 @@ public class PublicKeyPairs {
 		return bb.array();
 	}
 	public void fromBytes(byte[] b) {
+		//System.out.println("frombytes public key pairs bytelength="+b.length);
 		alpk.clear();
 		ByteBuffer bb=ByteBuffer.wrap(b);
 		int num=bb.getInt();
+		//System.out.println("ri length="+num);
 		bb.position(Integer.BYTES+num*Constants.InetAddressLength);
+		//System.out.println("bb position="+bb.position());
 		int siglen=bb.getInt();
+		//System.out.println("sig length="+siglen);
 		bb.position(bb.position()+siglen);
+		//System.out.println("bb position="+bb.position());
 		
 		int elen=0,mlen=0;
 		byte[] e=null,m=null;
@@ -63,7 +68,22 @@ public class PublicKeyPairs {
 			bb.get(m);
 			pkp=new PublicKeyPair();
 			pkp.setPublicKeyPair(e, m);
+			pkp.flag=bb.get();
+			//System.out.println("public key pairs pkp="+pkp);
 			alpk.add(pkp);
 		}
+	}
+	public String toString() {
+		String ret="";
+		for(int i=0;i<this.alpk.size();i++) {
+			if(alpk.get(i)==null) {
+				ret+="[null]";
+			}
+			else {
+				ret+="["+alpk.get(i)+"]";
+			}
+		}
+		
+		return ret;
 	}
 }
