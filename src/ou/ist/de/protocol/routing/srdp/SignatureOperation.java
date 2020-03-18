@@ -15,8 +15,6 @@ import ou.ist.de.protocol.routing.dsr.RouteInfo;
 public class SignatureOperation {
 
 	protected BigInteger secExp;
-	protected BigInteger pubExp;
-	protected BigInteger modulus;
 	protected PublicKeyPair pk;
 	public SignatureOperation() {
 
@@ -28,12 +26,10 @@ public class SignatureOperation {
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
 			gen.initialize(Integer.valueOf(sigBitLength));
 			KeyPair kp=gen.generateKeyPair();
-			pubExp = ((RSAPublicKey) kp.getPublic()).getPublicExponent();
 			secExp = ((RSAPrivateKey) kp.getPrivate()).getPrivateExponent();
-			modulus = ((RSAPublicKey) kp.getPublic()).getModulus();
 			pk=new PublicKeyPair();
-			pk.pubExp=pubExp;
-			pk.modulus=modulus;
+			pk.pubExp=((RSAPublicKey) kp.getPublic()).getPublicExponent();
+			pk.modulus=((RSAPublicKey) kp.getPublic()).getModulus();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,17 +45,17 @@ public class SignatureOperation {
 		boolean b = false;
 		if (signature.sig != null) {
 			
-			if (signature.sig.compareTo(this.modulus) > 0) {// -1 pre < modulus, 0 pre==modulus, 1 pre>modulus
-				signature.sig = signature.sig.subtract(this.modulus);
+			if (signature.sig.compareTo(pk.modulus) > 0) {// -1 pre < modulus, 0 pre==modulus, 1 pre>modulus
+				signature.sig = signature.sig.subtract(pk.modulus);
 				//System.out.println("modulus=" + this.modulus);
 				b = true;
 				System.out.println("sig is larger than modulus");
-				this.pk.flag=1;
 			}
 			hash = hash.add(signature.sig);
 		}
-		hash = hash.mod(this.modulus).modPow(this.secExp, this.modulus);
+		hash = hash.mod(pk.modulus).modPow(this.secExp, pk.modulus);
 		//System.out.println("sig=" + hash);
+		this.pk.flag=((byte)((b)?1:0));
 		return new Signature(hash);
 	}
 	protected byte[] generateTargetData(RouteInfo ri) {
@@ -102,7 +98,7 @@ public class SignatureOperation {
 	
 	
 	public byte[] hashCalc(byte[] data) {
-		return this.hashCalc(data, this.modulus.toByteArray(), this.pubExp.toByteArray());
+		return this.hashCalc(data, pk.modulus.toByteArray(), pk.pubExp.toByteArray());
 	}
 	public byte[] hashCalc(byte[] data, byte[] modulus, byte[] pubExp) {
 		ByteBuffer bb = ByteBuffer.allocate(data.length + modulus.length + pubExp.length);
@@ -112,7 +108,7 @@ public class SignatureOperation {
 
 		byte[] ret = null;
 		try {
-			MessageDigest sha = MessageDigest.getInstance("MD5");
+			MessageDigest sha = MessageDigest.getInstance("SHA-256");
 			sha.update(bb.array());
 			
 			BigInteger tmp=new BigInteger(sha.digest());

@@ -7,18 +7,12 @@ import ou.ist.de.protocol.Constants;
 
 public class Signature {
 	protected BigInteger sig;
-	protected int siglen;
-	protected int bitlen;
 	
 	public Signature() {
 		
 	}
-	public Signature(int bitlen) {
-		this.bitlen=bitlen;
-	}
 	public Signature(byte[] sigbyte) {
 		this.sig=new BigInteger(sigbyte);
-		this.siglen=sigbyte.length;
 	}
 	public Signature(BigInteger sig) {
 		this.sig=sig;
