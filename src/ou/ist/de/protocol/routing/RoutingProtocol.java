@@ -128,6 +128,7 @@ public abstract class RoutingProtocol {
 	protected abstract Packet operateReplyPacket(Packet p);
 	protected abstract Packet operateRequestForwardingPacket(Packet p);
 	protected abstract Packet operateReplyForwardingPacket(Packet p);
+	protected abstract void separateOption(Packet p);
 	
 	
 }

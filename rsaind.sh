@@ -1,6 +1,6 @@
 #!/bin/bash
 java -Xmx32g -Xms8g -cp ./bin \
 ou.ist.de.protocol.Main \
--protocol:RSA \
+-protocol:RSAIndividual \
 -port:10000 \
 -frag:1000

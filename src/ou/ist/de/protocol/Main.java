@@ -9,6 +9,7 @@ import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.DSR;
 import ou.ist.de.protocol.routing.isdsr.ISDSR;
 import ou.ist.de.protocol.routing.rsabase.RSABaseSecureRouting;
+import ou.ist.de.protocol.routing.rsabaseindividualkey.RSABaseIndividualSecureRouting;
 import ou.ist.de.protocol.routing.srdp.SRDP;
 
 public class Main {
@@ -37,6 +38,7 @@ public class Main {
 		Constants.INIT_SEQ = Integer.valueOf(this.checkParameters(params, Constants.ARG_INITIAL_SEQUENCE_NUM, Constants.DEFAULT_INITIAL_SEQUENCE_NUM));
 		Constants.REPEAT= Integer.valueOf(this.checkParameters(params, Constants.ARG_REPEAT, Constants.DEFAULT_REPEAT_TIMES));
 		Constants.FSIZE = Integer.valueOf(this.checkParameters(params, Constants.ARG_FRAGMENTATION_SIZE, Constants.DEFAULT_FRAGMENTATION_SIZE));
+		Constants.SignatureBitLength = Integer.valueOf(this.checkParameters(params, Constants.ARG_SIG_BIT_LENGTH, Constants.DEFAULT_RSA_SIG_BIT_LENGTH));
 		
 		
 		String protocol = this.getParameter("-protocol");
@@ -69,6 +71,9 @@ public class Main {
 		}
 		if (name.equalsIgnoreCase("SRDP")) {
 			return new SRDP(params);
+		}
+		if (name.equalsIgnoreCase("RSAIndividual")) {
+			return new RSABaseIndividualSecureRouting(params);
 		}
 		return null;
 	}
