@@ -1,4 +1,4 @@
-package ou.ist.de.protocol.routing.isdsr;
+package ou.ist.de.protocol.routing.isdsr.jpbc;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -6,8 +6,9 @@ import java.io.ObjectOutputStream;
 
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
+import ou.ist.de.protocol.routing.isdsr.MasterKey;
 
-public class IBSASKeyGen {
+public class IBSASJpbcKeyGen {
 	public void generateKeys(String paramFile, String outFile, int repeat) {
 		Pairing pairing = PairingFactory.getPairing(paramFile);
 
@@ -30,7 +31,7 @@ public class IBSASKeyGen {
 		}
 	}
 	public static void main(String[] args) {
-		IBSASKeyGen kg=new IBSASKeyGen();
+		IBSASJpbcKeyGen kg=new IBSASJpbcKeyGen();
 		kg.generateKeys("a.properties", "a.keys", 100);
 		kg.generateKeys("a1.properties", "a1.keys", 100);
 		kg.generateKeys("e.properties", "e.keys", 100);

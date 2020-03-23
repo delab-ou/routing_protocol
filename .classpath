@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="/Users/hal/workspace/jpbc-2.0.0/jars/jpbc-mm-2.0.0.jar"/>
 	<classpathentry kind="lib" path="/Users/hal/workspace/jpbc-2.0.0/jars/jpbc-pbc-2.0.0.jar"/>
 	<classpathentry kind="lib" path="/Users/hal/workspace/jpbc-2.0.0/jars/jpbc-plaf-2.0.0.jar"/>
+	<classpathentry kind="lib" path="/Users/hal/workspace/git_workspace/mcl/ffi/java/mcl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
