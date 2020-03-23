@@ -179,6 +179,7 @@ public class SignatureOperation {
 		return ret;
 	}
 
+	
 	protected Element Hash(HashType ht, String str) {
 
 		byte[] src = null;
