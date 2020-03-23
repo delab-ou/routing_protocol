@@ -1,27 +1,14 @@
-package ou.ist.de.protocol.routing.isdsr;
+package ou.ist.de.protocol.routing.isdsr.jpbc;
 
-public class MSK extends ISDSRKey{
+import it.unisa.dia.gas.jpbc.Element;
+
+public class MSK {
+	protected Element a1;
+	protected Element a2;
 	
-	
-	public MSK() {
-		super(2);
-	}
-	
-	@Override
-	protected void setParameterNames() {
-		// TODO Auto-generated method stub
-		names=new String[] {"msk.a1","msk.a2"};
-	}
-	public byte[] getMSK1() {
-		return super.get(0);
-	}
-	public void setMSK1(byte[] msk1) {
-		super.set(0, msk1);
-	}
-	public byte[] getMSK2() {
-		return super.get(1);
-	}
-	public void setMSK2(byte[] msk2) {
-		super.set(1, msk2);
+	public String toString(){
+		String ret="msk.a1:"+a1.toString()+"\n";
+		ret+="msk.a2:"+a2.toString()+"\n";
+		return ret;
 	}
 }
