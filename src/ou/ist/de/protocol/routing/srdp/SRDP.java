@@ -12,7 +12,8 @@ public class SRDP extends RoutingProtocol {
 	
 	protected HashMap<String,ArrayList<String>> rcvCache;
 	protected RouteInfo ri;
-	protected Signatures sigs;
+	protected Signature sig;
+	protected PublicKeyPairs pkp;
 	protected boolean verifyAll;
 	protected SignatureOperation so;
 	
@@ -28,7 +29,8 @@ public class SRDP extends RoutingProtocol {
 		this.parameterCheck(params);
 		System.out.println("sigbit "+params.get(Constants.ARG_SIG_BIT_LENGTH));
 		ri = new RouteInfo();
-		sigs = new Signatures(Integer.valueOf(params.get(Constants.ARG_SIG_BIT_LENGTH)));
+		sig=new Signature();
+		pkp=new PublicKeyPairs();
 		this.verifyAll = false;
 		so = new SignatureOperation(params);
 		rcvCache=new HashMap<String,ArrayList<String>>();
@@ -44,7 +46,6 @@ public class SRDP extends RoutingProtocol {
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
 		// TODO Auto-generated method stub
-		this.sigs.clear();
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
 		// System.out.println("request in RSA "+p.toString());
@@ -57,11 +58,15 @@ public class SRDP extends RoutingProtocol {
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
 		// TODO Auto-generated method stub
-		this.sigs.clear();
 		this.ri.clear();
+		this.pkp.clear();
 		ri.fromBytes(p.getOption());
 		ri.addNode(this.node.getAddress());
+		//System.out.println(ri.toString());
 		p.setNext(ri.get(ri.size() - 2));
+		pkp.add(so.getPublicKeyPair());
+		System.out.println("public key pair="+so.getPublicKeyPair());
+		this.sig.sig=null;
 		return this.signingPacket(p);
 	}
 
@@ -83,6 +88,7 @@ public class SRDP extends RoutingProtocol {
 	protected Packet operateReplyForwardingPacket(Packet p) {
 		// TODO Auto-generated method stub
 		//System.out.println("in srdp op reply "+p.toString());
+		
 		this.separateOption(p);
 		if (!this.ri.isContained(this.node.getAddress())) {
 			//System.out.println(" not contained");
@@ -90,7 +96,13 @@ public class SRDP extends RoutingProtocol {
 		}
 
 		if (p.getDest().equals(this.node.getAddress())) {
-			//System.out.println("reply verification:" + this.verifyingPacket(p));
+
+			boolean v=this.verifyingPacket(p);
+			if(!v) {
+				//System.exit(1);
+			}
+			System.out.println("----------- reply verification:" + v);
+			
 			//System.out.println(p.toString());
 			return null;
 		}
@@ -104,6 +116,14 @@ public class SRDP extends RoutingProtocol {
 				break;
 			}
 		}
+		
+		/*
+		if(!v) {
+			System.out.println("----- forwarding false -----");
+			return null;
+		}
+		*/
+		pkp.add(so.getPublicKeyPair());
 		p.setSndr(this.node.getAddress());
 		p.setHops(p.getHops() + 1);
 		
@@ -112,27 +132,45 @@ public class SRDP extends RoutingProtocol {
 	
 	protected void separateOption(Packet p) {
 		ri.clear();
-		sigs.clear();
+		pkp.clear();
 		if (p.getOption() == null) {
 			return;
 		}
 		ri.fromBytes(p.getOption());
-		sigs.fromOption(p.getOption());
+		if(p.getType()==Constants.REP) {
+			System.out.println("received packet is REP");
+			sig=new Signature();
+		sig.fromBytes(p.getOption());
+		pkp.fromBytes(p.getOption());
+		}
 
 	}
 
 	public Packet signingPacket(Packet p) {
-		byte[] s = so.sign(this.ri, this.sigs);
-		sigs.add(s);
-		ByteBuffer bb = ByteBuffer.allocate(this.ri.byteLength() + sigs.byteLength());
-		bb.put(this.ri.toBytes());
-		bb.put(this.sigs.toBytes());
+		Signature s= so.sign(this.ri, this.sig, this.pkp);
+		byte[] ribytes=ri.toBytes();
+		byte[] sigbytes=s.toBytes();
+		byte[] pkpbytes=pkp.toBytes();
+		ByteBuffer bb = ByteBuffer.allocate(ribytes.length+sigbytes.length+pkpbytes.length);
+		bb.put(ribytes);
+		System.out.println("sigp ri length="+ribytes.length);
+		bb.put(sigbytes);
+		System.out.println("sigp sig length="+sigbytes.length);
+		bb.put(pkpbytes);
+		System.out.println("sigp pkp length="+pkpbytes.length);
 		p.setOption(bb.array());
+		System.out.println("sigp set option length="+bb.capacity());
 		return p;
 	}
 
 	public boolean verifyingPacket(Packet p) {
-		return so.verify(this.ri, this.sigs);
+		byte[] ribytes=ri.toBytes();
+		byte[] sigbytes=sig.toBytes();
+		byte[] pkpbytes=pkp.toBytes();
+		System.out.println("veri ri length="+ribytes.length);
+		System.out.println("veri sig length="+sigbytes.length);
+		System.out.println("veri pkp length="+pkpbytes.length);
+		return so.verify(this.ri, this.sig,this.pkp);
 	}
 	protected boolean checkReqCache(Packet p) {
 		
