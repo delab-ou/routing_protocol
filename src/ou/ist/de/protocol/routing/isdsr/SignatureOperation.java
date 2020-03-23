@@ -91,7 +91,7 @@ public class SignatureOperation {
 		Element t6 = isksk1.powZn(t5);
 		s1.add(t3);
 		s1.add(t4);
-		Element sk2=pairing.getG1().newElementFromBytes(isk.getISK2());
+		Element sk2=pairing.getZr().newElementFromBytes(isk.getISK2());
 		s1.add(sk2);
 		s1.add(t6);
 		sigs.setSIG1(s1.toBytes());
