@@ -97,6 +97,7 @@ public class SignatureOperation {
 		sigs.setSIG1(s1.toBytes());
 		sigs.setSIG2(s2.toBytes());
 		sigs.setSIG3(s3.toBytes());
+		System.out.println("verification = "+this.verify(ri, sigs));
 		return sigs.toBytes();
 	}
 	
