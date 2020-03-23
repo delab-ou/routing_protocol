@@ -1,4 +1,4 @@
-package ou.ist.de.protocol.routing.isdsr.jpbc;
+package ou.ist.de.protocol.routing.isdsr;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
