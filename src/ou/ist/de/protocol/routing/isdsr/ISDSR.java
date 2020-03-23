@@ -35,7 +35,9 @@ public class ISDSR extends RoutingProtocol {
 		// TODO Auto-generated method stub
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
-		sigs.fromBytes(null, so.pairing);
+		sigs.setSIG1(null);
+		sigs.setSIG2(null);
+		sigs.setSIG3(null);
 		Packet pkt=signingPacket(p);
 		//System.out.println("verify:"+this.verifyingPacket(pkt));
 		return pkt;
@@ -107,8 +109,9 @@ public class ISDSR extends RoutingProtocol {
 		if (p.getOption() == null) {
 			return;
 		}
-		ri.fromBytes(p.getOption());
-		sigs.fromOption(p.getOption(), so.pairing);
+		int offset=ri.fromBytes(p.getOption());
+		
+		sigs.fromBytes(p.getOption(), offset);
 
 	}
 
