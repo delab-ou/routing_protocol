@@ -57,6 +57,14 @@ public class SignatureOperation {
 		// Element immpkg1=mpk.g1.getImmutable();
 		r = pairing.getZr().newRandomElement();
 		x = pairing.getZr().newRandomElement();
+		r=pairing.getZr().newElement(17);
+		x=pairing.getZr().newElement(13);
+		
+
+		System.out.println("sig1="+sigs.sig1);
+		System.out.println("sig2="+sigs.sig2);
+		System.out.println("sig3="+sigs.sig3);
+		
 		Element t1 = mpkg1.powZn(x);
 		Element t2 = mpkg1.powZn(r);
 		Element t3 = sigs.sig3.duplicate().powZn(r);// r*sig3
@@ -64,17 +72,35 @@ public class SignatureOperation {
 		sigs.sig3.add(t1);
 		sigs.sig2.add(t2);
 
-		Element t4 = sigs.sig2.duplicate();
-		t4.powZn(x);// x*sig2'
+
+		System.out.println("sig1="+sigs.sig1);
+		System.out.println("sig2="+sigs.sig2);
+		System.out.println("sig3="+sigs.sig3);
+		
+		Element t4 = sigs.sig2.duplicate().powZn(x);// x*sig2'
 		Element t5 = Hash(HashType.H3, (uid + msg));// Hash3((uid +
 													// msg).getBytes());//H3(ID||msg)
 
 		// Element t6 = isk.sk1.duplicate().powZn(t5);// H3(ID||msg)a1H1(ID)
 		Element t6 = isksk1.powZn(t5);
+
+		System.out.println("t6="+t6);
 		sigs.sig1.add(t3);
 		sigs.sig1.add(t4);
 		sigs.sig1.add(isk.sk2);
+		
+
+		System.out.println("sk2="+isk.sk2);
+		
 		sigs.sig1.add(t6);
+		
+
+		System.out.println("sig1="+sigs.sig1);
+		System.out.println("sig2="+sigs.sig2);
+		System.out.println("sig3="+sigs.sig3);
+		
+		
+		System.out.println("verify = "+this.verify(ri, sigs));
 		return sigs.toBytes();
 	}
 	
@@ -84,9 +110,26 @@ public class SignatureOperation {
 		String[] uid = ri.getAddrArray();
 		String msg = "";
 		int num=ri.size();
+		
+		System.out.println("sig1="+sigs.sig1);
+		System.out.println("sig2="+sigs.sig2);
+		System.out.println("sig3="+sigs.sig3);
+		
+		System.out.println("mpk1="+mpk.g1);
+		System.out.println("mpk2="+mpk.g2);
+		System.out.println("mpk3="+mpk.g3);
+		
+		
+		
 		Element t1 = pairing.pairing(sigs.sig1, mpk.g1);// e(sig1,g)
 		Element t2 = pairing.pairing(sigs.sig2, sigs.sig3);// e(sig2,sig3)
 		Element t3 = pairing.getG1().newElement().setToZero();
+		
+
+		System.out.println("t1="+t1);
+		System.out.println("t2="+t2);
+		System.out.println("t3="+t3);
+		
 		Element t4, t5, t6;
 		Element t7 = pairing.getG1().newElement().setToZero();
 		Element t8, t9;
@@ -106,6 +149,9 @@ public class SignatureOperation {
 		t2.mul(t8);
 		t2.mul(t9);
 
+		
+		System.out.println("t1="+t1);
+		System.out.println("t2="+t2);
 		if (t1.isEqual(t2)) {
 			ret = true;
 		} else {
