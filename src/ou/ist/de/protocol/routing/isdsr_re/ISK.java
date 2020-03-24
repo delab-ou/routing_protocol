@@ -10,7 +10,6 @@ public class ISK extends ISDSRKey{
 	
 	@Override
 	protected void setParameterNames() {
-		// TODO Auto-generated method stub
 		this.names=new String[] {"isk.sk1","isk.sk2"};
 	}
 

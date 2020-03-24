@@ -23,7 +23,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 
 	@Override
 	protected void initialize(HashMap<String, String> params) {
-		// TODO Auto-generated method stub
+		
 		
 		this.parameterCheck(params);
 		System.out.println("sigbit "+params.get(Constants.ARG_SIG_BIT_LENGTH));
@@ -42,7 +42,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
-		// TODO Auto-generated method stub
+		
 		this.sigs.clear();
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
@@ -55,7 +55,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
-		// TODO Auto-generated method stub
+		
 		//System.out.println("received packet = "+p.toString());
 		this.separateOption(p);
 		if (this.ri.isContained(this.node.getAddress())) {
@@ -73,7 +73,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 
 	@Override
 	protected Packet operateRequestForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
+		
 		this.separateOption(p);
 
 		if (this.ri.isContained(this.node.getAddress())) {
@@ -92,7 +92,7 @@ public class RSABaseSecureRouting extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
+		
 		this.separateOption(p);
 
 		if (!this.ri.isContained(this.node.getAddress())) {

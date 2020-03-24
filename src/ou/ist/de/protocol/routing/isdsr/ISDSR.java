@@ -19,7 +19,6 @@ public class ISDSR extends RoutingProtocol {
 	}
 	@Override
 	protected void initialize(HashMap<String, String> params) {
-		// TODO Auto-generated method stub
 		ri = new RouteInfo();
 		sigs = new Signatures();
 		this.verifyAll = false;
@@ -32,7 +31,6 @@ public class ISDSR extends RoutingProtocol {
 	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
-		// TODO Auto-generated method stub
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
 		sigs.fromBytes(null, so.pairing);
@@ -43,7 +41,6 @@ public class ISDSR extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
-		// TODO Auto-generated method stub
 		this.separateOption(p);
 		if (this.ri.isContained(this.node.getAddress())) {
 			return null;
@@ -60,7 +57,6 @@ public class ISDSR extends RoutingProtocol {
 
 	@Override
 	protected Packet operateRequestForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
 		this.separateOption(p);
 
 		if (this.ri.isContained(this.node.getAddress())) {
@@ -79,7 +75,6 @@ public class ISDSR extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
 		this.separateOption(p);
 
 		if (!this.ri.isContained(this.node.getAddress())) {

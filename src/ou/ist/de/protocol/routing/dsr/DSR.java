@@ -19,7 +19,6 @@ public class DSR extends RoutingProtocol {
 	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
-		// TODO Auto-generated method stub
 		ri.clear();
 		ri.addNode(this.node.getAddress());
 		p.setOption(ri.toBytes());
@@ -28,7 +27,6 @@ public class DSR extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyPacket(Packet p) {
-		// TODO Auto-generated method stub
 		ri.clear();
 		this.separateOption(p);
 		if (ri.isContained(this.node.getAddress())) {
@@ -42,7 +40,6 @@ public class DSR extends RoutingProtocol {
 	
 	@Override
 	protected Packet operateRequestForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
 		ri.clear();
 		this.separateOption(p);
 		if (ri.isContained(this.node.getAddress())) {
@@ -57,7 +54,6 @@ public class DSR extends RoutingProtocol {
 
 	@Override
 	protected Packet operateReplyForwardingPacket(Packet p) {
-		// TODO Auto-generated method stub
 		ri.clear();
 		this.separateOption(p);
 		if(p.getDest().equals(this.node.getAddress())) {
@@ -83,13 +79,11 @@ public class DSR extends RoutingProtocol {
 	
 	@Override
 	protected void initialize(HashMap<String, String> params) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected void separateOption(Packet p) {
-		// TODO Auto-generated method stub
 		this.ri.fromBytes(p.getOption());
 	}
 

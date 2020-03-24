@@ -113,7 +113,6 @@ public class Main {
 
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Main m = new Main();
 
 		// java ou.ist.de.protocol.Main -protocol:DSR -port:000 -dest:10.0.0.0

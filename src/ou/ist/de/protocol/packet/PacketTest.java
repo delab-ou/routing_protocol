@@ -8,7 +8,6 @@ import ou.ist.de.protocol.Constants;
 public class PacketTest {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Packet p = new Packet();
 		Packet p1 = new Packet();
 		PacketFrag pf=new PacketFrag();

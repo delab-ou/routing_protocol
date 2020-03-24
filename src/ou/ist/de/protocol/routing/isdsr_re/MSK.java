@@ -9,7 +9,6 @@ public class MSK extends ISDSRKey{
 	
 	@Override
 	protected void setParameterNames() {
-		// TODO Auto-generated method stub
 		names=new String[] {"msk.a1","msk.a2"};
 	}
 	public byte[] getMSK1() {

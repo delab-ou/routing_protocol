@@ -10,7 +10,6 @@ public class MPK extends ISDSRKey{
 	
 	@Override
 	protected void setParameterNames() {
-		// TODO Auto-generated method stub
 		names=new String[] {"mpk.g1","mpk.g2","mpk.g3"};
 	}
 

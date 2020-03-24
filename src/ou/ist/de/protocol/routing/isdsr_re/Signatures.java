@@ -26,7 +26,6 @@ public class Signatures extends ISDSRKey{
 	}
 	@Override
 	protected void setParameterNames() {
-		// TODO Auto-generated method stub
 		names=new String[] {"sig1","sig2","sig3"};
 	}
 
