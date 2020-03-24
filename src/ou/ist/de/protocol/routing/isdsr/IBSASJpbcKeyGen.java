@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
-import ou.ist.de.protocol.routing.isdsr.MasterKey;
 
 public class IBSASJpbcKeyGen {
 	public void generateKeys(String paramFile, String outFile, int repeat) {

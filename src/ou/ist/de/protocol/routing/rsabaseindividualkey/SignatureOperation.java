@@ -69,7 +69,7 @@ public class SignatureOperation {
 		System.out.println("in verify ri sigs, signature length =" + sigs.size());
 		RouteInfo tmpri=new RouteInfo();
 		Signatures tmpsigs=new Signatures();
-		PublicKeyPairs tmppkp=new PublicKeyPairs();
+		//PublicKeyPairs tmppkp=new PublicKeyPairs();
 		PublicKeyPair tmppk=null;
 		byte[] s=null;
 		BigInteger tmps=null;

@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.G1;
+import com.herumi.mcl.GT;
 import com.herumi.mcl.Mcl;
 
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
@@ -156,7 +157,6 @@ public class MCLSignatureOperation extends SignatureOperation{
 		mpk3.deserialize(mpk.getMPK3());
 		
 		GT e1=new GT();
-		Mcl.p
 		Element s1=pairing.getG1().newElementFromBytes(sigs.getSIG1());
 		Element s2=pairing.getG1().newElementFromBytes(sigs.getSIG2());
 		Element s3=pairing.getG1().newElementFromBytes(sigs.getSIG3());

@@ -36,6 +36,7 @@ public class DataCalc {
 				al.add(r);
 			}
 			alr.add(al);
+			br.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

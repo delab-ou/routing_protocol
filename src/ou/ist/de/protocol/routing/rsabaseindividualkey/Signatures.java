@@ -51,7 +51,7 @@ public class Signatures {
 		ByteBuffer bb=ByteBuffer.wrap(bs);
 		int num=bb.getInt();
 		bb.position(Integer.BYTES+num*Constants.InetAddressLength);
-		int total=bb.getInt();
+		//int total=bb.getInt();
 		for(int i=0;i<num;i++) {
 			int len=bb.getInt();
 			byte[] s=new byte[len];

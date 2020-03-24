@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import ou.ist.de.protocol.Constants;
-import ou.ist.de.protocol.routing.rsabaseindividualkey.PublicKeyPair;
 
 public class PublicKeyPairs {
 

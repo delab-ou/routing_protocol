@@ -105,7 +105,7 @@ public class Signatures {
 		try {
 			//System.err.println("in Signatures toBytes bytelength=" + this.byteLength() + " bb=" + bb + " sigs=" + sigs);
 			for (int i = 0; i < sigs.size(); i++) {
-				byte[] b=this.sigs.get(i);
+				//byte[] b=this.sigs.get(i);
 				//System.out.println("sigs["+i+"]="+b.length);
 				bb.put(this.sigs.get(i));
 			}

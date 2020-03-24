@@ -1,7 +1,6 @@
 package ou.ist.de.protocol.routing;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import ou.ist.de.protocol.Constants;
