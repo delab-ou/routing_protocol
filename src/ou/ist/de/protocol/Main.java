@@ -66,7 +66,10 @@ public class Main {
 		if (name.equalsIgnoreCase("RSA")) {
 			return new RSABaseSecureRouting(params);
 		}
-		if (name.equalsIgnoreCase("ISDSR")) {
+		if (name.equalsIgnoreCase("ISDSR_JPBC")) {
+			return new ISDSR(params);
+		}
+		if (name.equalsIgnoreCase("ISDSR_MCL")) {
 			return new ISDSR(params);
 		}
 		if (name.equalsIgnoreCase("SRDP")) {

@@ -1,13 +1,15 @@
-package ou.ist.de.protocol.routing.isdsr_re.mcl;
+package ou.ist.de.protocol.routing.isdsr.mcl;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
 
+import ou.ist.de.protocol.routing.isdsr.ISDSRKey;
 import ou.ist.de.protocol.routing.isdsr.MasterKey;
 
 import com.herumi.mcl.G1;
+import com.herumi.mcl.G2;
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.Mcl;
 
@@ -35,11 +37,11 @@ public class IBSASMclKeyGen {
 		//System.loadLibrary(System.mapLibraryName("mcljava"));
 		Mcl.SystemInit(param); // curveType = Mcl.BN254 or Mcl.BLS12_381
 		
-		MasterKey mk = new MasterKey();
+		MasterKey mk = new MasterKey(repeat);
 		mk.paramFile = paramFile;
-		mk.ale = new MasterKey.Elements[repeat];
 		Random rnd = new Random();	
 		G1 g1=new G1();
+		G2 g2=new G2();
 		Fr fr1=null;
 		Fr fr2=null;
 		
@@ -47,14 +49,19 @@ public class IBSASMclKeyGen {
 		for (int i = 0; i < repeat; i++) {
 			rndv=String.valueOf(rnd.nextInt());
 			Mcl.hashAndMapToG1(g1, rndv.getBytes());
-			mk.ale[i] = mk.new Elements();
-			mk.ale[i].g = g1.serialize();
+			Mcl.hashAndMapToG2(g2, rndv.getBytes());
+
 			fr1=new Fr();
 			fr1.setByCSPRNG();
 			fr2=new Fr();
 			fr2.setByCSPRNG();
-			mk.ale[i].a1 = fr1.serialize();
-			mk.ale[i].a2 = fr2.serialize();
+
+			mk.keys[i]=new ISDSRKey(4);
+			mk.keys[i].set(0,g1.serialize());
+			mk.keys[i].set(1,g2.serialize());
+			mk.keys[i].set(2,fr1.serialize());
+			mk.keys[i].set(3,fr2.serialize());
+
 			System.out.println("gen No. "+i+" key");
 		}
 		try {

@@ -1,22 +1,22 @@
-package ou.ist.de.protocol.routing.isdsr_re;
+package ou.ist.de.protocol.routing.isdsr;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-public abstract class ISDSRKey {
+public class ISDSRKey implements Serializable{
 	
-	public enum type{MPK,MSK,ISK};
+	
+	private static final long serialVersionUID = -557954243350900825L;
 	protected byte[][] keys;
-	
 	protected String[] names;
+	
 	protected ISDSRKey() {
 		keys=null;
-		setParameterNames();
 		
 	}
-	protected ISDSRKey(int num) {
+	public ISDSRKey(int num) {
 		keys=new byte[num][];
-		setParameterNames();
 	}
 	
 	public byte[] get(int index) {
@@ -31,13 +31,17 @@ public abstract class ISDSRKey {
 	}
 	public String toString() {
 		String ret="";
-		for(int i=0;i<names.length;i++) {
-			ret+=names[i]+" = "+getAsString(i)+"\n";
+		for(int i=0;i<keys.length;i++) {
+			ret+=((names==null)?"":names[i])+" = "+getAsString(i)+"\n";
 		}
 		return ret;
 	}
-	protected abstract void setParameterNames();
-	
+	protected void setParameterNames(String[] names){
+		this.names=names;
+	}
+	public int getNumberOfMembers(){
+		return keys.length;
+	}
 	public byte[] toBytes() {
 		int length=0;
 		for(int i=0;i<keys.length;i++) {

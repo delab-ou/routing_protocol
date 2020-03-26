@@ -7,33 +7,50 @@ import ou.ist.de.protocol.node.Node;
 import ou.ist.de.protocol.packet.Packet;
 import ou.ist.de.protocol.routing.RoutingProtocol;
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
+import ou.ist.de.protocol.routing.isdsr.jpbc.JPBCSignatureOperation;
+import ou.ist.de.protocol.routing.isdsr.mcl.MCLSignatureOperation;
 
 public class ISDSR extends RoutingProtocol {
 	protected RouteInfo ri;
 	protected Signatures sigs;
 	protected SignatureOperation so;
 	protected boolean verifyAll;
-	
+	protected String siglib;
+
 	public ISDSR(HashMap<String,String> params) {
 		super(params);
 	}
 	@Override
 	protected void initialize(HashMap<String, String> params) {
 		ri = new RouteInfo();
-		sigs = new Signatures();
+		int siglen=3;
+		siglib="jpbc";
+		if(params.containsKey("-siglib")){
+			this.siglib=params.get("-siglib");
+			if(siglib.equalsIgnoreCase("mcl")){
+				siglen=4;
+			}
+		}
+		sigs = new Signatures(siglen);
 		this.verifyAll = false;
 	}
 	@Override
 	public void setNode(Node node) {
 		this.node=node;
 		System.out.println(this.node.toString()+":"+this.node.getAddress());
-		so=new SignatureOperation(this.node.getParams(), this.node.getAddress().toString());
+		if(siglib.equalsIgnoreCase("mcl")){
+			so=new MCLSignatureOperation(this.node.getParams(), this.node.getAddress().toString());
+		}
+		else{
+			so=new JPBCSignatureOperation(this.node.getParams(), this.node.getAddress().toString());
+		}
 	}
 	@Override
 	protected Packet operateRequestPacket(Packet p) {
 		this.ri.clear();
 		this.ri.addNode(this.node.getAddress());
-		sigs.fromBytes(null, so.pairing);
+		sigs.clear();
+		//sigs.fromBytes(null, so.pairing);
 		Packet pkt=signingPacket(p);
 		//System.out.println("verify:"+this.verifyingPacket(pkt));
 		return pkt;
@@ -102,8 +119,8 @@ public class ISDSR extends RoutingProtocol {
 		if (p.getOption() == null) {
 			return;
 		}
-		ri.fromBytes(p.getOption());
-		sigs.fromOption(p.getOption(), so.pairing);
+		int offset=ri.fromBytes(p.getOption());
+		sigs.fromBytes(p.getOption(), offset);
 
 	}
 
