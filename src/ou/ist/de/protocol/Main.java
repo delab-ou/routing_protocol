@@ -70,6 +70,7 @@ public class Main {
 			return new ISDSR(params);
 		}
 		if (name.equalsIgnoreCase("ISDSR_MCL")) {
+			params.put("-siglib","mcl");
 			return new ISDSR(params);
 		}
 		if (name.equalsIgnoreCase("SRDP")) {
