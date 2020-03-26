@@ -158,7 +158,7 @@ public class MCLSignatureOperation extends SignatureOperation {
 		ret.set(1,newsig2.serialize());
 		ret.set(2,newsig3g1.serialize());
 		ret.set(3,newsig3g2.serialize());
-		System.out.println("verification = " + this.verify(ri, ret));
+		//System.out.println("verification = " + this.verify(ri, ret));
 		return ret.toBytes();
 	}
 
