@@ -237,6 +237,9 @@ public class MCLSignatureOperation extends SignatureOperation {
 
 	protected Fr H3(String str) {
 		BigInteger hash = new BigInteger(super.sha256Generator(str.getBytes()));
+		if(hash.compareTo(BigInteger.ZERO)<0){
+			hash=hash.negate();
+		}
 		Fr ret = new Fr(hash.toString());
 		return ret;
 	}
