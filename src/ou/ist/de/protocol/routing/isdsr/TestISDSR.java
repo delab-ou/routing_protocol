@@ -18,30 +18,53 @@ public class TestISDSR {
 		System.out.println("libName : " + libName);
 		System.loadLibrary(lib);
 	}
+
+	
 	public static void main(String args[]) {
-		Mcl.SystemInit(Mcl.BLS12_381);
-		Fr f=null;
-		for(int i=0;i<300;i++){
-			System.out.println("count="+(i+1));
-			f=new Fr(5);
-			f.setInt(4);
-			//f.setStr("0 0 0");
-			f.delete();
+		
+		
+		int num=0;
+		String mclkey=null;
+		String jpbckey=null;
+		
+		for(int i=0;i<args.length;i++){
+			if(args[i].equalsIgnoreCase("-nodes")){
+				num=Integer.valueOf(args[i+1]);
+			}
+			if(args[i].equalsIgnoreCase("-mclkey")){
+				mclkey=args[i+1];
+			}
+			if(args[i].equalsIgnoreCase("-jpbckey")){
+				jpbckey=args[i+1];
+			}
 		}
 		
 		TestISDSR test=new TestISDSR();
-		//test.testJPBC(10);
-		test.testMCL(40);
+		test.testJPBC(num,jpbckey);
+		test.testMCL(num,mclkey);
 		
 	}
-	public void testMCL(int num){
+	public void testMCL(int num,String key){
 
 		System.out.println("---- test mcl ----");
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("-keyfile", "bls12_381.keys");
+
+		if(key==null){
+			params.put("-keyfile", "bls12_381.keys");
+		}
+		else{
+			if(key.equalsIgnoreCase("bn254")){
+				params.put("-keyfile", key+".keys");
+			}
+			else{
+				params.put("-keyfile", "bls12_381.keys");
+			}
+		}
+		System.out.println("key file = "+key);
 		long t=0;
 		RouteInfo ri = new RouteInfo();
 		Signatures sigs=new Signatures(4);
+
 		try {
 			SignatureOperation so[]=new SignatureOperation[num];
 			InetAddress addrs[]=new InetAddress[num];
@@ -56,7 +79,7 @@ public class TestISDSR {
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
 				ri.addNode(addrs[i]);
-				System.out.println("signed by "+addrs[i].toString());
+				//System.out.println("signed by "+addrs[i].toString());
 				sigs.fromBytes(so[i].sign(ri, sigs),0);
 			}
 			System.out.println("signing by "+ num+ " nodes for "+(System.currentTimeMillis()-t)+" [ms]");
@@ -68,12 +91,28 @@ public class TestISDSR {
 			e.printStackTrace();
 		}
 	}
-	public void testJPBC(int num){
+	public void testJPBC(int num,String key){
 		System.out.println("---- test jpbc ----");
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("-keyfile", "a.keys");
-		params.put("-paramfile", "a.properties");
+		String keys=null;
+		if(key==null){
+			keys="a";
+		}
+		else{
+			if(key.equalsIgnoreCase("e")){
+				keys="e";
+			}
+			else if(key.equalsIgnoreCase("a1")){
+				keys="a1";
+			}
+			else{
+				keys="a";
+			}
+		}
+		params.put("-keyfile", keys+".keys");
+		params.put("-paramfile", keys+".properties");
 
+		System.out.println("key file = "+keys);
 		long t=0;
 		RouteInfo ri = new RouteInfo();
 		Signatures sigs=new Signatures(3);
@@ -91,7 +130,7 @@ public class TestISDSR {
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
 				ri.addNode(addrs[i]);
-				System.out.println("signed by "+addrs[i].toString());
+				//System.out.println("signed by "+addrs[i].toString());
 				sigs.fromBytes(so[i].sign(ri, sigs),0);
 			}
 			System.out.println("signing by "+ num+ "nodes for "+(System.currentTimeMillis()-t)+" [ms]");
