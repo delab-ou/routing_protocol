@@ -18,4 +18,11 @@ public class Signatures extends ISDSRKey {
 			keys[i]=null;
 		}
 	}
+	public int totalSigLength(){
+		int ret=0;
+		for(byte[] sig:this.keys){
+			ret+=sig.length;
+		}
+		return ret;
+	}
 }

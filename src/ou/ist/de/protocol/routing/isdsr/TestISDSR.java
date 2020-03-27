@@ -3,9 +3,6 @@ package ou.ist.de.protocol.routing.isdsr;
 import java.net.InetAddress;
 import java.util.HashMap;
 
-import com.herumi.mcl.Fr;
-import com.herumi.mcl.G1;
-import com.herumi.mcl.Mcl;
 
 import ou.ist.de.protocol.routing.dsr.RouteInfo;
 import ou.ist.de.protocol.routing.isdsr.mcl.MCLSignatureOperation;
@@ -44,6 +41,19 @@ public class TestISDSR {
 		test.testMCL(num,mclkey);
 		
 	}
+
+	protected InetAddress getHost(int num){
+		InetAddress ret=null;
+		try{
+			int pre=num/220;
+			int suf=(num%220)+1;
+			ret=InetAddress.getByName("10.0."+pre+"."+String.valueOf(suf));
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return ret;
+	}
 	public void testMCL(int num,String key){
 
 		System.out.println("---- test mcl ----");
@@ -71,10 +81,11 @@ public class TestISDSR {
 
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
-				addrs[i]=InetAddress.getByName("10.0.0."+String.valueOf((i+1)));
+				addrs[i]=this.getHost(i);
 				so[i]=new MCLSignatureOperation(params, addrs[i].toString());
 			}
-			SignatureOperation somcl = new MCLSignatureOperation(params, InetAddress.getByName("10.0.0."+String.valueOf(num+1)).toString());
+			InetAddress verinode=this.getHost(num+1);
+			SignatureOperation somcl = new MCLSignatureOperation(params, verinode.toString());
 			System.out.println("preparation:"+(System.currentTimeMillis()-t)+" [ms]");
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
@@ -85,7 +96,7 @@ public class TestISDSR {
 			System.out.println("signing by "+ num+ " nodes for "+(System.currentTimeMillis()-t)+" [ms]");
 			t=System.currentTimeMillis();
 			boolean v=somcl.verify(ri, sigs);
-			System.out.println("verified "+v+" by 10.0.0."+InetAddress.getByName("10.0.0."+String.valueOf(num+1)).toString()+" for : "+(System.currentTimeMillis()-t)+" [ms]");
+			System.out.println("verified "+v+" by "+verinode.toString()+" for : "+(System.currentTimeMillis()-t)+" [ms]");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -122,10 +133,11 @@ public class TestISDSR {
 
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
-				addrs[i]=InetAddress.getByName("10.0.0."+String.valueOf((i+1)));
+				addrs[i]=this.getHost(i);
 				so[i]=new JPBCSignatureOperation(params, addrs[i].toString());
 			}
-			SignatureOperation somcl = new JPBCSignatureOperation(params, InetAddress.getByName("10.0.0."+String.valueOf(num)).toString());
+			InetAddress verinode=this.getHost(num+1);
+			SignatureOperation somcl = new JPBCSignatureOperation(params, verinode.toString());
 			System.out.println("preparation:"+(System.currentTimeMillis()-t)+" [ms]");
 			t=System.currentTimeMillis();
 			for(int i=0;i<num;i++){
@@ -136,7 +148,7 @@ public class TestISDSR {
 			System.out.println("signing by "+ num+ "nodes for "+(System.currentTimeMillis()-t)+" [ms]");
 			t=System.currentTimeMillis();
 			boolean v=somcl.verify(ri, sigs);
-			System.out.println("verified "+v+" by 10.0.0."+num+" for : "+(System.currentTimeMillis()-t)+" [ms]");
+			System.out.println("verified "+v+" by "+verinode.toString()+" for : "+(System.currentTimeMillis()-t)+" [ms]");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

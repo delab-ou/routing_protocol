@@ -86,12 +86,6 @@ public class MCLSignatureOperation extends SignatureOperation {
 			Mcl.mul(mpk3, mpk1g2, msk2);
 			keys.setMPK(3,mpk3.serialize());
 			
-			mpk1g1.delete();
-			mpk1g2.delete();
-			msk1.delete();
-			mpk3.delete();
-			msk2.delete();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -111,11 +105,6 @@ public class MCLSignatureOperation extends SignatureOperation {
 		Mcl.mul(hash2, hash2, msk2);
 		keys.setISK(0,hash1.serialize());
 		keys.setISK(1,hash2.serialize());
-
-		hash1.delete();
-		hash2.delete();
-		msk1.delete();
-		msk2.delete();
 
 	}
 
@@ -170,23 +159,8 @@ public class MCLSignatureOperation extends SignatureOperation {
 		ret.set(1,newsig2.serialize());
 		ret.set(2,newsig3g1.serialize());
 		ret.set(3,newsig3g2.serialize());
+		System.out.println("total siglength="+ret.totalSigLength());
 		//System.out.println("verification = " + this.verify(ri, ret));
-
-		sig1.delete();
-		sig2.delete();
-		sig3g1.delete();
-		sig3g2.delete();
-		mpk1g1.delete();
-		mpk1g2.delete();
-		newsig1.delete();
-		newsig2.delete();
-		newsig3g1.delete();
-		newsig3g2.delete();
-		tmp.delete();
-		tmpisk.delete();
-		hash.delete();
-		x.delete();
-		r.delete();
 
 		return ret.toBytes();
 	}
@@ -247,23 +221,6 @@ public class MCLSignatureOperation extends SignatureOperation {
 		if (t1.equals(t2)) {
 			ret = true;
 		} 
-		sig1.delete();
-		sig2.delete();
-		sig3g1.delete();
-		sig3g2.delete();
-		mpk1g1.delete();
-		mpk1g2.delete();
-		mpk2.delete();
-		mpk3.delete();
-		t1.delete();
-		t2.delete();
-		t3.delete();
-		t4.delete();
-		t5.delete();
-		t6.delete();
-		t7.delete();
-		t8.delete();
-		t9.delete();
 		return ret;
 	}
 

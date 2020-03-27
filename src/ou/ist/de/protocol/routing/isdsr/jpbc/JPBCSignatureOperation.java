@@ -87,6 +87,7 @@ public class JPBCSignatureOperation extends SignatureOperation{
 		ret.set(0,s[0].toBytes());
 		ret.set(1,s[1].toBytes());
 		ret.set(2,s[2].toBytes());
+		System.out.println("total siglength="+ret.totalSigLength());
 		//System.out.println("verification = "+this.verify(ri, ret));
 		return ret.toBytes();
 	}
