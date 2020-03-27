@@ -27,5 +27,9 @@ public class Test {
 		Mcl.hashAndMapToG2(g2, "123456789".getBytes());
 		System.out.println("g1="+g1.toString(16));
 		System.out.println("g2="+g2.toString(16));
+
+		Fr fr=new Fr();
+		fr.setByCSPRNG();
+		System.out.println("fr="+fr);
 	}
 }

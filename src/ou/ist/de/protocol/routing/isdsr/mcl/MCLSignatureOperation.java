@@ -3,6 +3,7 @@ package ou.ist.de.protocol.routing.isdsr.mcl;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 import com.herumi.mcl.Fr;
@@ -40,7 +41,7 @@ public class MCLSignatureOperation extends SignatureOperation {
 		 * sig1 G1 sig2 G1 sig3 G1 and G2
 		 */
 		this.keys=new ISDSRKeys(4, 2, 2);
-		String keyfile = "bls12_381.keys";
+		String keyfile = "bn254.keys";
 		int curve=Mcl.BLS12_381;
 		if (params.containsKey("-keyfile")) {
 			keyfile = params.get("-keyfile");
@@ -84,6 +85,12 @@ public class MCLSignatureOperation extends SignatureOperation {
 			msk2.deserialize(keys.getMSK(1));
 			Mcl.mul(mpk3, mpk1g2, msk2);
 			keys.setMPK(3,mpk3.serialize());
+			
+			mpk1g1.delete();
+			mpk1g2.delete();
+			msk1.delete();
+			mpk3.delete();
+			msk2.delete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,6 +111,11 @@ public class MCLSignatureOperation extends SignatureOperation {
 		Mcl.mul(hash2, hash2, msk2);
 		keys.setISK(0,hash1.serialize());
 		keys.setISK(1,hash2.serialize());
+
+		hash1.delete();
+		hash2.delete();
+		msk1.delete();
+		msk2.delete();
 
 	}
 
@@ -159,6 +171,23 @@ public class MCLSignatureOperation extends SignatureOperation {
 		ret.set(2,newsig3g1.serialize());
 		ret.set(3,newsig3g2.serialize());
 		//System.out.println("verification = " + this.verify(ri, ret));
+
+		sig1.delete();
+		sig2.delete();
+		sig3g1.delete();
+		sig3g2.delete();
+		mpk1g1.delete();
+		mpk1g2.delete();
+		newsig1.delete();
+		newsig2.delete();
+		newsig3g1.delete();
+		newsig3g2.delete();
+		tmp.delete();
+		tmpisk.delete();
+		hash.delete();
+		x.delete();
+		r.delete();
+
 		return ret.toBytes();
 	}
 
@@ -218,6 +247,23 @@ public class MCLSignatureOperation extends SignatureOperation {
 		if (t1.equals(t2)) {
 			ret = true;
 		} 
+		sig1.delete();
+		sig2.delete();
+		sig3g1.delete();
+		sig3g2.delete();
+		mpk1g1.delete();
+		mpk1g2.delete();
+		mpk2.delete();
+		mpk3.delete();
+		t1.delete();
+		t2.delete();
+		t3.delete();
+		t4.delete();
+		t5.delete();
+		t6.delete();
+		t7.delete();
+		t8.delete();
+		t9.delete();
 		return ret;
 	}
 
@@ -236,11 +282,15 @@ public class MCLSignatureOperation extends SignatureOperation {
 	}
 
 	protected Fr H3(String str) {
-		BigInteger hash = new BigInteger(super.sha256Generator(str.getBytes()));
-		if(hash.compareTo(BigInteger.ZERO)<0){
-			hash=hash.negate();
+		byte[] digest=super.sha256Generator(str.getBytes());
+		ByteBuffer bb=ByteBuffer.wrap(digest);
+		int hash=bb.getInt();
+		if(hash<0){
+			hash=hash*(-1);
 		}
-		Fr ret = new Fr(hash.toString());
+		
+		//Fr ret = new Fr(hash.toString());
+		Fr ret=new Fr(hash);
 		return ret;
 	}
 
