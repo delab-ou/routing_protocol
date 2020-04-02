@@ -80,7 +80,7 @@ public abstract class RoutingProtocol {
 				return null;
 			}
 			String reqCache=""+p.getType()+p.getSrc().toString()+p.getDest().toString()+p.getSeq();
-			t=new Long(System.currentTimeMillis());
+			t=Long.valueOf(System.currentTimeMillis());
 			if(cache.containsKey(reqCache)) {
 				if((t-cache.get(reqCache))<Constants.TIMEOUT) {
 					//System.out.println("cached");
@@ -100,7 +100,7 @@ public abstract class RoutingProtocol {
 	
 	public void receivePacket(Packet p) {
 		//System.out.println("In RoutingProtocol receivedPacket "+p.toString());
-		long t=System.currentTimeMillis();
+		//long t=System.currentTimeMillis();
 		Packet pkt = null;
 		//System.out.println("receive from "+p.getSndr()+" seq:"+p.getSeq()+" hops:"+p.getHops()+" type:"+p.getType());
 		if (p.getDest().equals(this.node.getAddress())) {

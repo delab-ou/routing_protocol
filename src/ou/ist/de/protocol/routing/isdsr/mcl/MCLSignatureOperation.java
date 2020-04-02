@@ -2,7 +2,6 @@ package ou.ist.de.protocol.routing.isdsr.mcl;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
@@ -41,7 +40,7 @@ public class MCLSignatureOperation extends SignatureOperation {
 		 * sig1 G1 sig2 G1 sig3 G1 and G2
 		 */
 		this.keys=new ISDSRKeys(4, 2, 2);
-		String keyfile = "bn254.keys";
+		String keyfile = "bls12_381.keys";
 		int curve=Mcl.BLS12_381;
 		if (params.containsKey("-keyfile")) {
 			keyfile = params.get("-keyfile");
@@ -175,7 +174,7 @@ public class MCLSignatureOperation extends SignatureOperation {
 
 		G1 sig1 = sigFromBytesG1(sigs.get(0));
 		G1 sig2 = sigFromBytesG1(sigs.get(1));
-		G1 sig3g1 = sigFromBytesG1(sigs.get(2));
+		//G1 sig3g1 = sigFromBytesG1(sigs.get(2));
 		G2 sig3g2 = sigFromBytesG2(sigs.get(3));
 
 		G1 mpk1g1 = new G1();

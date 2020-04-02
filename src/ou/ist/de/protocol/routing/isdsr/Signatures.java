@@ -21,6 +21,7 @@ public class Signatures extends ISDSRKey {
 	public int totalSigLength(){
 		int ret=0;
 		for(byte[] sig:this.keys){
+			System.out.println("sig:"+sig.length);
 			ret+=sig.length;
 		}
 		return ret;
